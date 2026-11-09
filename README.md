@@ -2,6 +2,8 @@
 
 FindYourFood is a Windows-first development monorepo for independently deployed food-delivery microservices. The Angular customer app connects through YARP to Identity. The Angular staff portal also uses Organization to manage scoped permissions. Each service owns its SQL Server database.
 
+See [API structure](docs/architecture/API_STRUCTURE.md) for the controller, repository, interface, and unit-of-work paths in each service.
+
 ## Run locally
 
 Use PowerShell 7, Git, the stable .NET 10 SDK in [global.json](global.json), Node.js 24 LTS (24.15 or newer), and a local SQL Server instance. The scripts use workspace-local SDKs under `.local-tools/dotnet` and `.local-tools/node` when present. The default SQL instance is `.\MSSQL22`, using Windows authentication. To use another local instance, set `ConnectionStrings__Identity` with database name `FindYourFood_IdentityDb` before running the scripts.

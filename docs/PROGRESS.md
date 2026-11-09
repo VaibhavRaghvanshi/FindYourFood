@@ -18,3 +18,9 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Passed 24 backend and 7 frontend unit and integration tests. The SQL tests cover owner uniqueness, MFA replay, scope and hierarchy enforcement, descendant revocation and audit records. Both Angular apps build independently.
 - Passed the staff browser flow against isolated Identity and Organization databases through the live gateway, plus both customer browser regression tests. Applied both migrations to the regular local databases and confirmed there are no pending model changes.
 - Published the foundation on the default GitHub branch. See [work plan](WORK_PLAN.md) for the remaining product scope.
+
+## API folder layout
+
+- Grouped each service's solution, API, Application, Domain, Infrastructure, and test projects under `backend/services/FindYourFood.<Service>.Api`.
+- Moved the Identity and Organization routes into controllers and separated repository interfaces, EF Core repositories, and units of work. The owner enrollment and organization grant transactions use their own service DbContexts.
+- Built each service solution independently. EF Core found no pending model changes. See [API structure](architecture/API_STRUCTURE.md) for direct code paths.

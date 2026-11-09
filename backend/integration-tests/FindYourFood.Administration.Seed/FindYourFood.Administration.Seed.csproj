@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="../../services/Identity/src/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
-    <ProjectReference Include="../../services/Organization/src/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Identity.Api/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Organization.Api/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup><UserSecretsId>FindYourFood.Identity.Api</UserSecretsId></PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
-    <ProjectReference Include="../../../../building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
-  </ItemGroup>
-</Project>

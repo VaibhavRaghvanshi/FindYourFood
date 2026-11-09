@@ -1,5 +1,6 @@
 using System.Text.Json;
-using FindYourFood.Identity.Application;
+using FindYourFood.Identity.Application.Interfaces;
+using FindYourFood.Identity.Application.Services;
 using FindYourFood.Identity.Infrastructure;
 using FindYourFood.Identity.Infrastructure.Persistence;
 using FindYourFood.Organization.Infrastructure;
