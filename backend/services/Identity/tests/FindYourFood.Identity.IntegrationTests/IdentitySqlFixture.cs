@@ -15,6 +15,7 @@ public sealed class IdentitySqlFixture : IAsyncLifetime
     private WebApplicationFactory<Program>? _factory;
 
     public HttpClient CreateClient() => _factory!.CreateClient();
+    public IServiceProvider Services => _factory!.Services;
 
     public async Task InitializeAsync()
     {
@@ -40,6 +41,7 @@ public sealed class IdentitySqlFixture : IAsyncLifetime
         SetSetting("ConnectionStrings__Identity", testConnection.ConnectionString);
         SetSetting("Tokens__PublicKeyPath", publicKey);
         SetSetting("Tokens__PrivateKeyPath", privateKey);
+        SetSetting("Identity__KeyRingPath", _keys);
         _factory = new WebApplicationFactory<Program>();
     }
 
@@ -63,8 +65,10 @@ public sealed class IdentitySqlFixture : IAsyncLifetime
 
         if (Directory.Exists(_keys))
         {
-            File.Delete(Path.Combine(_keys, "public.pem"));
-            File.Delete(Path.Combine(_keys, "private.pem"));
+            foreach (var file in Directory.EnumerateFiles(_keys))
+            {
+                File.Delete(file);
+            }
             Directory.Delete(_keys);
         }
     }

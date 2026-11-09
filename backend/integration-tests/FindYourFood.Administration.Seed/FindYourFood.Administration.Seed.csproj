@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../../services/Identity/src/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/Organization/src/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

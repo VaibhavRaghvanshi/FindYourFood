@@ -1,6 +1,10 @@
 using FindYourFood.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("Gateway:EnableOrganization"))
+{
+    builder.Configuration.AddJsonFile("organization.routes.json", optional: false);
+}
 builder.AddFindYourFoodHosting("FindYourFood.ApiGateway");
 TokenSettings.FromConfiguration(builder.Configuration).ConfigureBearer(builder.Services);
 builder.Services.AddHealthChecks();

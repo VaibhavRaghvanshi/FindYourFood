@@ -23,6 +23,11 @@ internal static class IdentityEndpoints
             .RequireAuthorization()
             .Produces<CustomerProfile>()
             .Produces(StatusCodes.Status401Unauthorized);
+        identity.MapPost("/staff/login", StaffLoginAsync)
+            .AllowAnonymous()
+            .RequireRateLimiting("identity-write")
+            .Produces<AccessTokenResponse>()
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
     }
 
     private static async Task<IResult> RegisterAsync(Credentials input, CustomerAccounts accounts)
@@ -62,6 +67,17 @@ internal static class IdentityEndpoints
             : Results.Ok(new CustomerProfile(account.Id, account.Email, account.EmailVerified));
     }
 
+    private static async Task<IResult> StaffLoginAsync(
+        StaffCredentials input, PrivilegedAccounts accounts, DevelopmentTokenIssuer issuer, HttpContext http)
+    {
+        http.Response.Headers.CacheControl = "no-store";
+        var account = await accounts.AuthenticateAsync(input.Email, input.Password, input.Code);
+        return account is null
+            ? Results.Problem(statusCode: StatusCodes.Status401Unauthorized, title: "Sign-in failed.")
+            : Results.Ok(issuer.IssuePrivileged(account));
+    }
+
+    private sealed record StaffCredentials(string? Email, string? Password, string? Code);
     private sealed record Credentials(string? Email, string? Password);
     private sealed record CustomerProfile(Guid Id, string Email, bool EmailVerified);
 }

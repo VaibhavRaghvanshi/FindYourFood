@@ -88,6 +88,30 @@ namespace FindYourFood.Identity.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("FindYourFood.Identity.Infrastructure.Persistence.PrivilegedEnrollment", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("LastAcceptedStep")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ProtectedAuthenticator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("IsOwner")
+                        .IsUnique()
+                        .HasFilter("[IsOwner] = 1");
+
+                    b.ToTable("PrivilegedEnrollments");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -150,6 +174,15 @@ namespace FindYourFood.Identity.Infrastructure.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FindYourFood.Identity.Infrastructure.Persistence.PrivilegedEnrollment", b =>
+                {
+                    b.HasOne("FindYourFood.Identity.Infrastructure.Persistence.CustomerUser", null)
+                        .WithOne()
+                        .HasForeignKey("FindYourFood.Identity.Infrastructure.Persistence.PrivilegedEnrollment", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>

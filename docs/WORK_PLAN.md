@@ -1,8 +1,8 @@
 # Work plan
 
-1. Audit Windows tools and build the first tested Identity, Gateway and Angular registration slice.
-2. Add Identity account verification, secure owner bootstrap, production OIDC, sessions, MFA and audit. Design lifecycle and key rotation.
-3. Add Organization hierarchy, permission delegation, revocation and admin workflows with escalation tests.
+1. Completed the Windows audit and first Identity, Gateway and Angular registration slice.
+2. Completed local owner bootstrap and staff MFA. Production OIDC, email verification, session lifecycle, recovery, security audit and key rotation remain.
+3. Completed the local scoped Organization delegation, revocation and admin slice. Departments, staff invitations and later service policy enforcement remain.
 4. Add Experience configuration and publishing, then Provider onboarding and Catalog menu operations with portal features.
 5. Add Discovery and Location with customer search, manual address and nearby ranking.
 6. Add Cart and Ordering with idempotent checkout, immutable snapshots and a durable saga.

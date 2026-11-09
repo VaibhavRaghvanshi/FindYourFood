@@ -24,9 +24,7 @@
                 "input": "apps/customer-web/public"
               }
             ],
-            "styles": [
-              "apps/customer-web/src/styles.css"
-            ]
+            "styles": ["apps/customer-web/src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -63,6 +61,70 @@
             },
             "development": {
               "buildTarget": "customer-web:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "admin-portal": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "apps/admin-portal",
+      "sourceRoot": "apps/admin-portal/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "apps/admin-portal/src/main.ts",
+            "tsConfig": "apps/admin-portal/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "apps/admin-portal/public"
+              }
+            ],
+            "styles": ["apps/admin-portal/src/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+            "options": {
+              "proxyConfig": "apps/customer-web/proxy.conf.json"
+            },
+            "configurations": {
+              "production": {
+                "buildTarget": "admin-portal:build:production"
+            },
+            "development": {
+              "buildTarget": "admin-portal:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -9,7 +9,9 @@ if ((Get-DevelopmentProcess 'identity') -or (Get-DevelopmentProcess 'gateway')) 
 
 Push-Location $projectRoot
 $started = [Collections.Generic.List[string]]::new()
+$organizationConnection = $env:ConnectionStrings__Organization
 try {
+  $env:ConnectionStrings__Organization = $null
   Set-IdentityDevelopmentConfiguration
   if (!$SkipBuild) {
     Invoke-Checked 'dotnet' @('build', 'FindYourFood.slnx', '-m:1', '/nodeReuse:false')
@@ -34,5 +36,6 @@ try {
   foreach ($name in $started) { Stop-DevelopmentProcess $name }
   throw
 } finally {
+  $env:ConnectionStrings__Organization = $organizationConnection
   Pop-Location
 }

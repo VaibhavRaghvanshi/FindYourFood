@@ -1,6 +1,6 @@
 # Database catalog
 
-The named local instance is `.\MSSQL22` on this machine. Each database below is reserved for its owner. Only Identity is part of the current migration set.
+The named local instance is `.\MSSQL22` on this machine. Each database below is reserved for its owner. Identity and Organization have migrations in their respective Infrastructure projects.
 
 | Database | Owner |
 | --- | --- |
@@ -21,4 +21,4 @@ The named local instance is `.\MSSQL22` on this machine. Each database below is 
 | `FindYourFood_CampaignDb` | Campaign |
 | `FindYourFood_SupportDb` | Support |
 
-Integration tests create and remove a uniquely named `FindYourFood_IdentityTest_*` database per suite. Use a local test SQL connection with database creation rights. A deployed service uses a separate runtime principal with privileges limited to its owned schema.
+Integration tests create and remove uniquely named `FindYourFood_IdentityTest_*` and `FindYourFood_OrganizationTest_*` databases. Use a local test SQL connection with database creation rights. A deployed service uses a separate runtime principal with privileges limited to its owned schema.

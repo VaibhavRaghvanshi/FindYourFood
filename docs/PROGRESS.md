@@ -11,4 +11,10 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Built Angular and passed 4 frontend unit tests. Passed 2 Playwright checks in Microsoft Edge for the gateway route policy and the browser registration, sign-in, and sign-out flow through SQL Server.
 - NuGet and npm audits found no known dependency vulnerabilities in the checked feeds.
 
-Next slice covers secure owner bootstrap and MFA, followed by scoped Organization authorization. See [work plan](WORK_PLAN.md) and [blockers](BLOCKERS.md).
+## Administration slice
+
+- Added one-time owner enrollment and interactive staff enrollment. Staff sign-in requires a password and a fresh authenticator code. Seeds are encrypted and each accepted code window is consumed atomically.
+- Added the independent Organization service and `FindYourFood_OrganizationDb` migration. Scoped staff permissions support delegation, access checks, audit writes and revocation through the Angular admin portal and YARP.
+- Passed 24 backend and 7 frontend unit and integration tests. The SQL tests cover owner uniqueness, MFA replay, scope and hierarchy enforcement, descendant revocation and audit records. Both Angular apps build independently.
+- Passed the staff browser flow against isolated Identity and Organization databases through the live gateway, plus both customer browser regression tests. Applied both migrations to the regular local databases and confirmed there are no pending model changes.
+- Published the foundation on the default GitHub branch. See [work plan](WORK_PLAN.md) for the remaining product scope.

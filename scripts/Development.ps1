@@ -4,6 +4,8 @@ $localTools = Join-Path $projectRoot '.local-tools'
 $localState = Join-Path $projectRoot '.local-state'
 $identityApi = Join-Path $projectRoot 'backend/services/Identity/src/FindYourFood.Identity.Api'
 $identityInfrastructure = Join-Path $projectRoot 'backend/services/Identity/src/FindYourFood.Identity.Infrastructure'
+$organizationApi = Join-Path $projectRoot 'backend/services/Organization/src/FindYourFood.Organization.Api'
+$organizationInfrastructure = Join-Path $projectRoot 'backend/services/Organization/src/FindYourFood.Organization.Infrastructure'
 $gateway = Join-Path $projectRoot 'backend/gateway/FindYourFood.ApiGateway'
 $frontend = Join-Path $projectRoot 'frontend'
 
@@ -32,6 +34,7 @@ function Set-IdentityDevelopmentConfiguration {
   New-Item -ItemType Directory -Force $keys | Out-Null
   $env:Tokens__PublicKeyPath = Join-Path $keys 'identity-public.pem'
   $env:Tokens__PrivateKeyPath = Join-Path $keys 'identity-private.pem'
+  $env:Identity__KeyRingPath = Join-Path $keys 'identity-protection'
   $hasPublicKey = Test-Path -LiteralPath $env:Tokens__PublicKeyPath
   $hasPrivateKey = Test-Path -LiteralPath $env:Tokens__PrivateKeyPath
   if ($hasPublicKey -ne $hasPrivateKey) { throw 'The local signing key pair is incomplete. Restore the missing key or move the remaining key out of .local-state/keys.' }
@@ -57,6 +60,15 @@ function Wait-ForEndpoint {
     } catch { Start-Sleep -Milliseconds 500 }
   } while ([DateTimeOffset]::UtcNow -lt $deadline)
   throw "$Url did not become ready. See .local-state logs."
+}
+
+function Set-OrganizationDevelopmentConfiguration {
+  if (!$env:ConnectionStrings__Organization) {
+    $env:ConnectionStrings__Organization = 'Server=.\MSSQL22;Database=FindYourFood_OrganizationDb;Integrated Security=True;Encrypt=True;TrustServerCertificate=True'
+  }
+  $env:ASPNETCORE_ENVIRONMENT = 'Development'
+  $env:DOTNET_ENVIRONMENT = 'Development'
+  $env:Tokens__PublicKeyPath = Join-Path $localState 'keys/identity-public.pem'
 }
 
 function Get-DevelopmentProcess {

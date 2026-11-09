@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FindYourFood.Identity.Infrastructure.Persistence;
 
 internal sealed class AspNetCustomerAccountStore(
+    IdentityDbContext database,
     UserManager<CustomerUser> users,
     SignInManager<CustomerUser> signIn,
     UnknownCustomerPassword unknownCustomer) : ICustomerAccountStore
@@ -39,7 +40,7 @@ internal sealed class AspNetCustomerAccountStore(
     public async Task<CustomerAccount?> AuthenticateAsync(CustomerEmail email, string password)
     {
         var user = await users.FindByNameAsync(email.Value);
-        if (user is null)
+        if (user is null || await database.PrivilegedEnrollments.AnyAsync(account => account.UserId == user.Id))
         {
             unknownCustomer.Verify(password);
             return null;
@@ -52,7 +53,9 @@ internal sealed class AspNetCustomerAccountStore(
     public async Task<CustomerAccount?> FindAsync(Guid id)
     {
         var user = await users.FindByIdAsync(id.ToString());
-        return user is null ? null : ToAccount(user);
+        return user is null || await database.PrivilegedEnrollments.AnyAsync(account => account.UserId == user.Id)
+            ? null
+            : ToAccount(user);
     }
 
     private static CustomerAccount ToAccount(CustomerUser user) =>

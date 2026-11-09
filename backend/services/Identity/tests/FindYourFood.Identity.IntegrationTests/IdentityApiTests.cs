@@ -2,6 +2,10 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+using FindYourFood.Identity.Application;
+using Microsoft.Extensions.DependencyInjection;
+using OtpNet;
 using Xunit;
 
 namespace FindYourFood.Identity.IntegrationTests;
@@ -65,6 +69,33 @@ public sealed class IdentityApiTests(IdentitySqlFixture fixture) : IClassFixture
         }
 
         Assert.Equal(HttpStatusCode.Unauthorized, (await Post(client, "login", email, Password)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Owner_enrollment_is_unique_and_staff_login_rejects_replayed_authenticator_code()
+    {
+        using var client = fixture.CreateClient();
+        var email = $"owner-{Guid.NewGuid():N}@example.test";
+        using var scope = fixture.Services.CreateScope();
+        var accounts = scope.ServiceProvider.GetRequiredService<PrivilegedAccounts>();
+        var secret = scope.ServiceProvider.GetRequiredService<IAuthenticatorEnrollment>().CreateSecret();
+        var totp = new Totp(Base32Encoding.ToBytes(secret));
+        var previousCode = totp.ComputeTotp(DateTime.UtcNow.AddSeconds(-30));
+        var owner = await accounts.EnrollAsync(email, Password, secret, previousCode, owner: true);
+        Assert.True(owner?.IsOwner);
+        Assert.Null(await accounts.EnrollAsync($"second-{email}", Password, secret,
+            totp.ComputeTotp(), owner: true));
+        Assert.Equal(HttpStatusCode.Unauthorized, (await Post(client, "login", email, Password)).StatusCode);
+
+        var code = totp.ComputeTotp();
+        var login = new { email, password = Password, code };
+        using var response = await client.PostAsJsonAsync(Root + "/staff/login", login);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var encoded = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("accessToken").GetString();
+        var claims = new JwtSecurityTokenHandler().ReadJwtToken(encoded).Claims;
+        Assert.Contains(claims, claim => claim.Type == "amr" && claim.Value == "mfa");
+        Assert.Contains(claims, claim => claim.Type == "account_type" && claim.Value == "owner");
+        Assert.Equal(HttpStatusCode.Unauthorized, (await client.PostAsJsonAsync(Root + "/staff/login", login)).StatusCode);
     }
 
     private static Task<HttpResponseMessage> Post(HttpClient client, string action, string email, string password) =>

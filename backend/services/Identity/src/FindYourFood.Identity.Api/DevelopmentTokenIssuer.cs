@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using FindYourFood.Hosting;
+using FindYourFood.Identity.Domain;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FindYourFood.Identity.Api;
@@ -31,16 +32,28 @@ internal sealed class DevelopmentTokenIssuer : IDisposable
         _credentials = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
     }
 
-    public AccessTokenResponse Issue(Guid customerId)
+    public AccessTokenResponse Issue(Guid customerId) => Issue(customerId, accountType: null);
+
+    public AccessTokenResponse IssuePrivileged(PrivilegedAccount account) =>
+        Issue(account.Id, account.IsOwner ? "owner" : "staff");
+
+    private AccessTokenResponse Issue(Guid subjectId, string? accountType)
     {
         var now = _clock.GetUtcNow().UtcDateTime;
+        var payload = new JwtPayload(_settings.Issuer, _settings.Audience, null, now, now.Add(Lifetime), now)
+        {
+            ["sub"] = subjectId.ToString("D"),
+            ["jti"] = Guid.NewGuid().ToString("D")
+        };
+        if (accountType is not null)
+        {
+            payload["account_type"] = accountType;
+            payload["amr"] = "mfa";
+        }
+
         var jwt = new JwtSecurityToken(
             new JwtHeader(_credentials) { ["typ"] = "at+jwt" },
-            new JwtPayload(_settings.Issuer, _settings.Audience, null, now, now.Add(Lifetime), now)
-            {
-                ["sub"] = customerId.ToString(),
-                ["jti"] = Guid.NewGuid().ToString()
-            });
+            payload);
         return new AccessTokenResponse(new JwtSecurityTokenHandler().WriteToken(jwt), (int)Lifetime.TotalSeconds);
     }
 

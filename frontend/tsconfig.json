@@ -26,6 +26,12 @@
     },
     {
       "path": "./apps/customer-web/tsconfig.spec.json"
+    },
+    {
+      "path": "./apps/admin-portal/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/admin-portal/tsconfig.spec.json"
     }
   ]
 }

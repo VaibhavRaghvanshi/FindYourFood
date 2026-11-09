@@ -2,6 +2,6 @@
 
 | ID | Feature | Description and impact | Required user action | Current status |
 | --- | --- | --- | --- | --- |
-| FYF-001 | GitHub publication | The empty local repository had no configured GitHub remote. Local commits can proceed. | Provide the target GitHub repository and authorized access if publication is wanted. | Open |
+| FYF-001 | GitHub publication | Connected the FindYourFood repository and pushed the foundation to its default branch. | None. | Resolved |
 
-Production OIDC, owner MFA, live integrations and later service profiles are planned roadmap work. Track their dependencies as their slices begin.
+Production OIDC, account recovery, live integrations and later service profiles are planned roadmap work. Track their dependencies as their slices begin.

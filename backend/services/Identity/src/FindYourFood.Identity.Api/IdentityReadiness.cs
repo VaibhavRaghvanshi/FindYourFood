@@ -10,6 +10,7 @@ internal sealed class IdentityReadiness(IdentityDbContext db) : IHealthCheck
         HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         await db.Users.AnyAsync(cancellationToken);
+        await db.PrivilegedEnrollments.AnyAsync(cancellationToken);
         return HealthCheckResult.Healthy();
     }
 }

@@ -1,0 +1,73 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "organization-grants": {
+        "ClusterId": "organization",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/organization/grants",
+          "Methods": [
+            "GET",
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "organization-revoke": {
+        "ClusterId": "organization",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/organization/grants/{id}",
+          "Methods": [
+            "DELETE"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "organization-permission": {
+        "ClusterId": "organization",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/organization/permissions/check",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "organization": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5102/"
+          }
+        }
+      }
+    }
+  }
+}

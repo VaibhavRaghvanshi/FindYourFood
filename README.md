@@ -1,6 +1,6 @@
 # FindYourFood
 
-FindYourFood is a Windows-first development monorepo for independently deployed food-delivery microservices. The first slice connects the Angular customer app through YARP to the Identity service and its private SQL Server database.
+FindYourFood is a Windows-first development monorepo for independently deployed food-delivery microservices. The Angular customer app connects through YARP to Identity. The Angular staff portal also uses Organization to manage scoped permissions. Each service owns its SQL Server database.
 
 ## Run locally
 
@@ -37,6 +37,23 @@ dotnet run --project $gateway
 
 Stop tracked processes with `.\scripts\Stop-DevelopmentServices.ps1`. Terminate manually launched processes in their own terminal. RabbitMQ, Kafka, Valkey and OTLP collectors belong to later integration profiles.
 
+## Run the staff portal
+
+From an interactive PowerShell 7 terminal, apply the migrations, enroll the owner, and enroll any staff accounts:
+
+```powershell
+.\scripts\Stop-DevelopmentServices.ps1
+.\scripts\Initialize-IdentityDatabase.ps1
+.\scripts\Initialize-OrganizationDatabase.ps1
+.\scripts\Enroll-PrivilegedAccount.ps1
+.\scripts\Enroll-PrivilegedAccount.ps1 -Staff
+.\scripts\Start-AdministrationEnvironment.ps1
+```
+
+Each enrollment prompts for a password and shows a time-based authenticator setup key once. Keep that key private. Enter the current code to complete enrollment, then wait for the next code before signing in. Run enrollment and Identity under the same Windows account so it can decrypt the local DPAPI key ring. Save the staff account UUID printed at enrollment to assign access in the portal. The database allows one owner enrollment.
+
+Open [the staff portal](http://localhost:4201). Organization listens on port 5102 and the gateway routes staff requests on port 5100. To use another local SQL Server instance, set `ConnectionStrings__Organization` with database name `FindYourFood_OrganizationDb`. See [the Organization contract](docs/api-contracts/ORGANIZATION.md) for permission and delegation rules.
+
 ## Verify
 
 ```powershell
@@ -45,5 +62,7 @@ $env:FINDYOURFOOD_TEST_SQL = 'Server=.\MSSQL22;Integrated Security=True;Encrypt=
 ```
 
 SQL integration tests require database creation rights on the local instance and create a temporary, isolated database. For browser verification, start the integration environment, then set `FINDYOURFOOD_BROWSER` to `msedge` or `chrome` for an installed browser. Alternatively run `npx playwright install chromium` from the frontend folder. Run `.\scripts\Test-Services.ps1 -EndToEnd` to add browser and gateway checks. Browser registration creates a synthetic account in the development Identity database.
+
+For the staff browser test, stop the running profile and run `.\scripts\Test-AdministrationBrowser.ps1` with the same SQL and browser settings. It creates temporary databases and synthetic MFA accounts, exercises the staff portal through YARP, and cleans up the test profile.
 
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

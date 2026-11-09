@@ -18,4 +18,15 @@
     <Project Path="backend/services/Identity/tests/FindYourFood.Identity.IntegrationTests/FindYourFood.Identity.IntegrationTests.csproj" />
     <Project Path="backend/services/Identity/tests/FindYourFood.Identity.UnitTests/FindYourFood.Identity.UnitTests.csproj" />
   </Folder>
+  <Folder Name="/backend/services/Organization/" />
+  <Folder Name="/backend/services/Organization/src/">
+    <Project Path="backend/services/Organization/src/FindYourFood.Organization.Api/FindYourFood.Organization.Api.csproj" />
+    <Project Path="backend/services/Organization/src/FindYourFood.Organization.Application/FindYourFood.Organization.Application.csproj" />
+    <Project Path="backend/services/Organization/src/FindYourFood.Organization.Domain/FindYourFood.Organization.Domain.csproj" />
+    <Project Path="backend/services/Organization/src/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/backend/services/Organization/tests/">
+    <Project Path="backend/services/Organization/tests/FindYourFood.Organization.IntegrationTests/FindYourFood.Organization.IntegrationTests.csproj" />
+    <Project Path="backend/services/Organization/tests/FindYourFood.Organization.UnitTests/FindYourFood.Organization.UnitTests.csproj" />
+  </Folder>
 </Solution>

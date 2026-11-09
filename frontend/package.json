@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "start": "ng serve customer-web",
+    "build": "ng build customer-web && ng build admin-portal",
+    "watch": "ng build customer-web --watch --configuration development",
     "test": "ng test",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "e2e:admin": "playwright test --config playwright.admin.config.ts"
   },
   "private": true,
   "packageManager": "npm@11.19.1",

@@ -52,6 +52,9 @@ public sealed record TokenSettings(string Issuer, string Audience, string Public
                 ClockSkew = TimeSpan.FromSeconds(15)
             };
         });
-        services.AddAuthorization();
+        services.AddAuthorization(options => options.AddPolicy("staff", policy => policy
+            .RequireAuthenticatedUser()
+            .RequireClaim("amr", "mfa")
+            .RequireClaim("account_type", "owner", "staff")));
     }
 }

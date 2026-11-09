@@ -1,0 +1,109 @@
+<header>
+  <span class="brand">FindYourFood <span>Staff portal</span></span>
+  @if (signedIn()) {
+    <button type="button" class="secondary" [disabled]="busy()" (click)="signOut()">Sign out</button>
+  }
+</header>
+<main [class.signed-in]="signedIn()">
+  <div class="intro">
+    <p class="eyebrow">Administration</p>
+    <h1>{{ signedIn() ? 'Staff access' : 'Staff sign-in' }}</h1>
+    <p>{{ signedIn() ? 'Manage scoped permissions and check what your account can do.' : 'Use your enrolled staff account and current authenticator code.' }}</p>
+  </div>
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
+  @if (busy()) { <p class="loading" role="status">Working…</p> }
+  @if (!signedIn()) {
+    <section class="panel">
+      <form [formGroup]="credentials" (ngSubmit)="signIn()" novalidate>
+        <fieldset [disabled]="busy()">
+          <label for="email">Email address</label>
+          <input id="email" type="email" formControlName="email" autocomplete="username" maxlength="254" />
+          <label for="password">Password</label>
+          <input id="password" type="password" formControlName="password" autocomplete="current-password" maxlength="128" />
+          <label for="code">Authenticator code</label>
+          <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" formControlName="code" maxlength="6" />
+          <button type="submit">Sign in</button>
+        </fieldset>
+      </form>
+    </section>
+  } @else {
+    <div class="actions">
+      <section class="panel" aria-labelledby="grant-heading">
+        <h2 id="grant-heading">Grant a permission</h2>
+        <form [formGroup]="assignment" (ngSubmit)="grantAccess()" novalidate>
+          <fieldset [disabled]="busy()">
+            <label for="subject">Staff account ID</label>
+            <input id="subject" formControlName="subjectId" placeholder="Account UUID" maxlength="36" />
+            <label for="level">Staff level</label>
+            <select id="level" formControlName="level">
+              @for (level of levels; track level) { <option [value]="level">{{ level }}</option> }
+            </select>
+            <label for="grant-permission">Permission</label>
+            <select id="grant-permission" formControlName="permission">
+              @for (permission of permissions; track permission) { <option>{{ permission }}</option> }
+            </select>
+            <label for="grant-scope">Resource scope</label>
+            <input id="grant-scope" formControlName="scope" placeholder="/city/pune" maxlength="160" />
+            <label for="parent">Parent grant ID</label>
+            <input id="parent" formControlName="parentGrantId" maxlength="36" aria-describedby="parent-hint" />
+            <small id="parent-hint">Required when delegating from your own grant. Owners leave this blank.</small>
+            <label class="checkbox"><input type="checkbox" formControlName="canDelegate" /> Allow delegation</label>
+            <button type="submit">Grant permission</button>
+          </fieldset>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="check-heading">
+        <h2 id="check-heading">Check my access</h2>
+        <form [formGroup]="permissionCheck" (ngSubmit)="checkAccess()" novalidate>
+          <fieldset [disabled]="busy()">
+            <label for="check-permission">Permission</label>
+            <select id="check-permission" formControlName="permission">
+              @for (permission of permissions; track permission) { <option>{{ permission }}</option> }
+            </select>
+            <label for="check-scope">Resource scope</label>
+            <input id="check-scope" formControlName="scope" maxlength="160" />
+            <button type="submit">Check permission</button>
+          </fieldset>
+        </form>
+      </section>
+    </div>
+    <section class="panel grants" aria-labelledby="list-heading">
+      <div class="section-heading">
+        <h2 id="list-heading">Visible grants</h2>
+        <button type="button" class="secondary" [disabled]="busy()" (click)="loadPage(page())">Refresh</button>
+      </div>
+      @if (grants().length === 0) {
+        <p>No grants on this page.</p>
+      } @else {
+        <ul>
+          @for (grant of grants(); track grant.id) {
+            <li>
+              <div>
+                <strong>{{ grant.permission }} · {{ grant.level }}</strong>
+                <span class="scope">{{ grant.scope }} · {{ grant.revokedAt ? 'Revoked' : 'Issued' }}</span>
+                <small>Staff ID {{ grant.subjectId }}</small>
+                <small>Grant ID {{ grant.id }}</small>
+              </div>
+              @if (!grant.revokedAt) {
+                @if (pendingRevoke() === grant.id) {
+                  <div class="row-actions">
+                    <button type="button" class="danger" [disabled]="busy()" (click)="revoke(grant.id)">Confirm revoke</button>
+                    <button type="button" class="secondary" [disabled]="busy()" (click)="pendingRevoke.set(null)">Cancel</button>
+                  </div>
+                } @else {
+                  <button type="button" class="secondary" [disabled]="busy()" (click)="pendingRevoke.set(grant.id)">Revoke</button>
+                }
+              }
+            </li>
+          }
+        </ul>
+      }
+      <nav class="row-actions" aria-label="Grant pages">
+        <button type="button" class="secondary" [disabled]="busy() || page() === 0" (click)="loadPage(page() - 1)">Previous</button>
+        <span>Page {{ page() + 1 }}</span>
+        <button type="button" class="secondary" [disabled]="busy() || grants().length < 50 || page() === 1000" (click)="loadPage(page() + 1)">Next</button>
+      </nav>
+    </section>
+  }
+</main>

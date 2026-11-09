@@ -36,6 +36,9 @@ public static class IdentityPersistence
         services.AddSingleton<UnknownCustomerPassword>();
         services.AddScoped<ICustomerAccountStore, AspNetCustomerAccountStore>();
         services.AddScoped<CustomerAccounts>();
+        services.AddScoped<IPrivilegedAccountStore, PrivilegedAccountStore>();
+        services.AddScoped<PrivilegedAccounts>();
+        services.AddSingleton<IAuthenticatorEnrollment, AuthenticatorEnrollment>();
         return services;
     }
 }
