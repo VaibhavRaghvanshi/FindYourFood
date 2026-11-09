@@ -1,0 +1,66 @@
+<main class="identity">
+  <aside class="brand-panel" aria-label="FindYourFood">
+    <div class="wordmark"><span class="brand-icon" aria-hidden="true">✳</span> FindYourFood</div>
+    <div class="brand-copy">
+      <p class="eyebrow">Made for the hungry</p>
+      <p class="headline">Good food.<br /><em>Close by.</em></p>
+      <p class="brand-description">Your next favorite meal starts here.</p>
+    </div>
+    <svg class="plate" viewBox="0 0 270 270" fill="none" aria-hidden="true">
+      <circle cx="135" cy="135" r="116" />
+      <circle cx="135" cy="135" r="91" />
+      <circle cx="135" cy="135" r="84" />
+      <path d="M90 132c15-33 37-43 59-30 10-21 38-8 37 11 25 9 18 42-4 43-14 29-44 30-58 8-25 18-45-4-34-32Z" />
+      <path d="M84 97l-9-12m24 0-3-14m89 119 10 11m-2-24 15 6M116 139c14-17 24 16 38-4 6-8 10-9 17-6" />
+    </svg>
+  </aside>
+
+  <section class="form-panel" aria-labelledby="identity-heading">
+    <div class="form-content">
+      <p class="eyebrow section-label">Customer account</p>
+      @if (profile(); as customer) {
+        <h1 id="identity-heading">You’re signed in</h1>
+        <p class="intro">Signed in as <strong>{{ customer.email }}</strong>.</p>
+        <button class="primary" type="button" (click)="signOut()">Sign out</button>
+      } @else {
+        <h1 id="identity-heading">{{ mode() === 'login' ? 'Welcome back' : 'Create your account' }}</h1>
+        <p class="intro">
+          {{ mode() === 'login' ? 'Sign in to your FindYourFood account.' : 'Get started with your email and a password.' }}
+        </p>
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate [attr.aria-busy]="busy()">
+          <fieldset [disabled]="busy()">
+            <label for="email">Email address</label>
+            <input id="email" type="email" autocomplete="username" formControlName="email"
+              maxlength="254" placeholder="you@example.com" aria-describedby="email-hint"
+              [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid" />
+            <p class="field-error" id="email-hint">
+              @if (form.controls.email.touched && form.controls.email.invalid) { Enter a valid email address. }
+            </p>
+            <label for="password">Password</label>
+            <input id="password" type="password" formControlName="password" maxlength="128"
+              [attr.autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+              aria-describedby="password-hint"
+              [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid" />
+            <p class="field-error" id="password-hint">
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                {{ mode() === 'register' ? 'Enter at least 12 characters.' : 'Enter your password.' }}
+              } @else if (mode() === 'register') { <span class="hint">Use at least 12 characters.</span> }
+            </p>
+            @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+            @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
+            <button class="primary" type="submit">
+              @if (busy()) { Please wait… }
+              @else { {{ mode() === 'login' ? 'Sign in' : 'Create account' }} }
+            </button>
+          </fieldset>
+        </form>
+        <p class="switch">
+          {{ mode() === 'login' ? 'New to FindYourFood?' : 'Already registered?' }}
+          <button type="button" [disabled]="busy()" (click)="chooseMode(mode() === 'login' ? 'register' : 'login')">
+            {{ mode() === 'login' ? 'Create an account' : 'Sign in' }}
+          </button>
+        </p>
+      }
+    </div>
+  </section>
+</main>

@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FindYourFood.Identity.Api/FindYourFood.Identity.Api.csproj" />
+    <Project Path="src/FindYourFood.Identity.Application/FindYourFood.Identity.Application.csproj" />
+    <Project Path="src/FindYourFood.Identity.Domain/FindYourFood.Identity.Domain.csproj" />
+    <Project Path="src/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FindYourFood.Identity.IntegrationTests/FindYourFood.Identity.IntegrationTests.csproj" />
+    <Project Path="tests/FindYourFood.Identity.UnitTests/FindYourFood.Identity.UnitTests.csproj" />
+  </Folder>
+  <Project Path="../../building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
+</Solution>

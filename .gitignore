@@ -1,0 +1,15 @@
+.local-tools/
+.local-state/
+**/bin/
+**/obj/
+**/TestResults/
+**/node_modules/
+**/.angular/
+**/dist/
+**/playwright-report/
+**/test-results/
+.vs/
+.env*
+*.pem
+*.pfx
+*.user
