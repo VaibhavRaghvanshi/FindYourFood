@@ -102,6 +102,10 @@ With Identity, Organization, and Provider initialized, stop the current profile 
 .\scripts\Start-MarketplaceEnvironment.ps1 -Services Catalog
 ```
 
-Sign in to the provider portal as the approved branch owner. Open **Branches and hours**, select **Edit menu** for the branch, save the draft, and publish it. Open `/menu/{branchId}` in the customer app to see the live menu. See the [Catalog API contract](docs/api-contracts/CATALOG.md) for ownership and version checks.
+Sign in to the provider portal as the approved branch owner. Open **Branches and hours**, select **Manage menu** for the branch, save the draft, and publish it. Open `/menu/{branchId}` in the customer app to see the live menu. See the [Catalog API contract](docs/api-contracts/CATALOG.md) for ownership and version checks.
+
+## Manage a customer profile
+
+Initialize Customer using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Customer`. Run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Customer`, sign in to the customer app, and select **Manage your account settings**. For both profiles and menus, start the profile with `-Services Catalog,Customer`. See the [Customer API contract](docs/api-contracts/CUSTOMER.md).
 
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

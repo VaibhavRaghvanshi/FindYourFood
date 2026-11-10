@@ -6,6 +6,9 @@
   <Folder Name="/backend/gateway/">
     <Project Path="backend/gateway/FindYourFood.ApiGateway/FindYourFood.ApiGateway.csproj" />
   </Folder>
+  <Folder Name="/backend/integration-tests/">
+    <Project Path="backend/integration-tests/FindYourFood.Testing/FindYourFood.Testing.csproj" />
+  </Folder>
   <Folder Name="/backend/services/" />
   <Folder Name="/backend/services/FindYourFood.Catalog.Api/">
     <Project Path="backend/services/FindYourFood.Catalog.Api/FindYourFood.Catalog.Api/FindYourFood.Catalog.Api.csproj" />
@@ -14,6 +17,14 @@
     <Project Path="backend/services/FindYourFood.Catalog.Api/FindYourFood.Catalog.Infrastructure/FindYourFood.Catalog.Infrastructure.csproj" />
     <Project Path="backend/services/FindYourFood.Catalog.Api/FindYourFood.Catalog.IntegrationTests/FindYourFood.Catalog.IntegrationTests.csproj" />
     <Project Path="backend/services/FindYourFood.Catalog.Api/FindYourFood.Catalog.UnitTests/FindYourFood.Catalog.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/backend/services/FindYourFood.Customer.Api/">
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.Api/FindYourFood.Customer.Api.csproj" />
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.Application/FindYourFood.Customer.Application.csproj" />
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.Domain/FindYourFood.Customer.Domain.csproj" />
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.Infrastructure/FindYourFood.Customer.Infrastructure.csproj" />
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.IntegrationTests/FindYourFood.Customer.IntegrationTests.csproj" />
+    <Project Path="backend/services/FindYourFood.Customer.Api/FindYourFood.Customer.UnitTests/FindYourFood.Customer.UnitTests.csproj" />
   </Folder>
   <Folder Name="/backend/services/FindYourFood.Experience.Api/">
     <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Api/FindYourFood.Experience.Api.csproj" />

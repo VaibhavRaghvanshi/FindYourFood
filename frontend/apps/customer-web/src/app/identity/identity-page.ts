@@ -1,23 +1,26 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { CustomerProfile, IdentityApi } from './identity-api';
+import { CustomerSession } from './customer-session';
+import { IdentityApi } from './identity-api';
 
 @Component({
   selector: 'app-identity-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './identity-page.html',
   styleUrl: './identity-page.css',
 })
 export class IdentityPage {
   private readonly identity = inject(IdentityApi);
+  private readonly session = inject(CustomerSession);
   private readonly builder = inject(NonNullableFormBuilder);
   readonly mode = signal<'login' | 'register'>('login');
   readonly busy = signal(false);
   readonly error = signal('');
   readonly notice = signal('');
-  readonly profile = signal<CustomerProfile | null>(null);
+  readonly profile = this.session.profile;
 
   readonly form = this.builder.group({
     email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
@@ -49,7 +52,7 @@ export class IdentityPage {
         this.setMode('login');
         this.notice.set('Account created. Sign in to continue.');
       } else {
-        this.profile.set(await firstValueFrom(this.identity.signIn(credentials)));
+        await firstValueFrom(this.identity.signIn(credentials));
         this.form.controls.password.reset();
       }
     } catch (error) {
@@ -60,7 +63,7 @@ export class IdentityPage {
   }
 
   signOut() {
-    this.profile.set(null);
+    this.session.clear();
     this.form.reset();
     this.notice.set('You’re signed out.');
   }

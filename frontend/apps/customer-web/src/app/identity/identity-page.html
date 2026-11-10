@@ -21,6 +21,7 @@
       @if (profile(); as customer) {
         <h1 id="identity-heading">You’re signed in</h1>
         <p class="intro">Signed in as <strong>{{ customer.email }}</strong>.</p>
+        <p><a routerLink="/account">Manage your account settings</a></p>
         <button class="primary" type="button" (click)="signOut()">Sign out</button>
       } @else {
         <h1 id="identity-heading">{{ mode() === 'login' ? 'Welcome back' : 'Create your account' }}</h1>

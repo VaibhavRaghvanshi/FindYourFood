@@ -1,9 +1,9 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([Parameter(Mandatory)][ValidateSet('Catalog')][string[]]$Services)
+param([Parameter(Mandatory)][ValidateSet('Catalog', 'Customer')][string[]]$Services)
 . "$PSScriptRoot/Development.ps1"
 
-$ports = @{ Catalog = 5105 }
+$ports = @{ Catalog = 5105; Customer = 5106 }
 $servicesToStart = @($Services | Select-Object -Unique)
 $needsProvider = $servicesToStart -contains 'Catalog'
 $names = @('frontend', 'identity', 'gateway')

@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'account',
+    title: 'Account settings | FindYourFood',
+    loadComponent: () => import('./account/customer-account').then((module) => module.CustomerAccount),
+  },
+  {
     path: 'menu/:branch',
     title: 'Menu | FindYourFood',
     loadComponent: () => import('./menu/customer-menu').then((module) => module.CustomerMenu),

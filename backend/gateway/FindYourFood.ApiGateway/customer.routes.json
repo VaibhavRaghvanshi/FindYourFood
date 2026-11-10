@@ -1,0 +1,44 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "customer-me": {
+        "ClusterId": "customer",
+        "AuthorizationPolicy": "Default",
+        "MaxRequestBodySize": 32768,
+        "Match": {
+          "Path": "/api/v1/customer/me",
+          "Methods": [
+            "GET",
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "customer": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5106/"
+          }
+        }
+      }
+    }
+  }
+}

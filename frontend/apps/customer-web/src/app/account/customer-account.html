@@ -1,0 +1,47 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="64" height="64" alt="FindYourFood home"></a></header>
+  <h1>Account settings</h1>
+  @if (message()) { <p role="status">{{ message() }}</p> }
+  @if (signInRequired()) { <a routerLink="/">Sign in</a> }
+  @else {
+    <button type="button" [disabled]="busy()" (click)="load()">Reload settings</button>
+  }
+  @if (draft(); as profile) {
+    <form #account="ngForm" (ngSubmit)="save()" [attr.aria-busy]="busy()">
+      <fieldset [disabled]="busy() || signInRequired()">
+        <legend>Profile and privacy</legend>
+        <label>Display name <input name="displayName" maxlength="80" autocomplete="nickname" [(ngModel)]="profile.settings.displayName"></label>
+        <label>Dietary preferences
+          <input name="dietary" maxlength="650" placeholder="Vegetarian, dairy-free" [(ngModel)]="dietary">
+        </label>
+        <label class="check"><input type="checkbox" name="personalized" [(ngModel)]="profile.settings.personalizedRecommendations">
+          Allow FindYourFood to personalize recommendations
+        </label>
+      </fieldset>
+      <fieldset [disabled]="busy() || signInRequired()">
+        <legend>Delivery addresses</legend>
+        @for (address of profile.settings.addresses; track address.id; let index = $index) {
+          <div class="address">
+            <label>Label <input [name]="'label-' + address.id" [(ngModel)]="address.label" required maxlength="30"></label>
+            <label>Street address <input [name]="'street-' + address.id" [(ngModel)]="address.street" required maxlength="220"></label>
+            <label>City <input [name]="'city-' + address.id" [(ngModel)]="address.city" required maxlength="100"></label>
+            <label>Postal code <input [name]="'postal-' + address.id" [(ngModel)]="address.postalCode" required minlength="3" maxlength="12"></label>
+            <label class="check"><input type="radio" name="primary" [value]="address.id" [(ngModel)]="profile.settings.primaryAddress">
+              Use as default address
+            </label>
+            <button type="button" (click)="removeAddress(profile, index)">Remove address</button>
+          </div>
+        } @empty { <p>No saved addresses yet.</p> }
+        <button type="button" [disabled]="profile.settings.addresses.length >= 8" (click)="addAddress(profile)">Add address</button>
+      </fieldset>
+      <fieldset [disabled]="busy() || signInRequired()">
+        <legend>Favorite menus</legend>
+        @for (branch of profile.settings.favoriteBranches; track branch; let index = $index) {
+          <div class="favorite"><a [routerLink]="['/menu', branch]">Open favorite {{ index + 1 }}</a>
+            <button type="button" (click)="profile.settings.favoriteBranches.splice(index, 1)">Remove favorite</button></div>
+        } @empty { <p>Save favorites from a branch menu.</p> }
+      </fieldset>
+      <button class="primary" type="submit" [disabled]="account.invalid || busy() || signInRequired()">Save settings</button>
+    </form>
+  }
+</main>

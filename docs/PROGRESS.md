@@ -46,3 +46,9 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Applied the initial migration to `FindYourFood_CatalogDb`. EF Core reported no pending model changes.
 - Approved branch owners can edit menus and publish immutable versions. Customers see the last published version, including ingredients, dietary tags, allergens, variants and add-ons.
 - Passed the Catalog unit test and SQL Server integration test for owner authorization, revision conflicts and publication visibility. All three Angular apps built.
+
+## Customer profiles
+
+- Applied the initial migration to `FindYourFood_CustomerDb`. EF Core reported no pending model changes.
+- Customers can save profile settings, multiple delivery addresses, dietary preferences and favorite menus. Personalization defaults to off. The browser retains the access token in memory for the development session.
+- Passed the Customer unit and SQL Server integration tests, including concurrent updates and cross-account access. All three Angular apps built and 12 frontend tests passed.

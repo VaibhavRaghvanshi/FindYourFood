@@ -2,6 +2,10 @@
   <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="84" height="84" alt="FindYourFood" /></a></header>
   @if (publication(); as current) {
     <h1>{{ current.menu.name }}</h1>
+    @if (session.profile()) {
+      <button type="button" [disabled]="savingFavorite()" (click)="saveFavorite(current.branchId)">Save favorite</button>
+      @if (favoriteMessage()) { <p role="status">{{ favoriteMessage() }}</p> }
+    }
     @for (category of categories(); track category) {
       <section>
         <h2>{{ category }}</h2>

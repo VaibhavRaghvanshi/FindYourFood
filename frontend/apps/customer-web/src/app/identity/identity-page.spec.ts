@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { IdentityPage } from './identity-page';
 
@@ -12,7 +13,7 @@ describe('Customer identity page', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IdentityPage],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
     page = TestBed.createComponent(IdentityPage).componentInstance;
     http = TestBed.inject(HttpTestingController);
@@ -44,7 +45,7 @@ describe('Customer identity page', () => {
     expect(page.busy()).toBe(false);
   });
 
-  it('uses the returned bearer token only for the protected profile request', async () => {
+  it('loads the authenticated profile and clears the session on sign out', async () => {
     page.form.setValue({ email: 'test@example.test', password: 'test account passphrase' });
     const result = page.submit();
     http.expectOne(root + '/login').flush({ accessToken: 'synthetic', expiresIn: 600, tokenType: 'Bearer' });

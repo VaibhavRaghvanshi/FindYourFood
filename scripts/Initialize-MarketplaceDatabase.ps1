@@ -1,6 +1,6 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([Parameter(Mandatory)][ValidateSet('Catalog')][string]$Service)
+param([Parameter(Mandatory)][ValidateSet('Catalog', 'Customer')][string]$Service)
 . "$PSScriptRoot/Development.ps1"
 
 $root = "backend/services/FindYourFood.$Service.Api"

@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="../../building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
+  <Project Path="../../integration-tests/FindYourFood.Testing/FindYourFood.Testing.csproj" />
+  <Project Path="FindYourFood.Customer.Api/FindYourFood.Customer.Api.csproj" />
+  <Project Path="FindYourFood.Customer.Application/FindYourFood.Customer.Application.csproj" />
+  <Project Path="FindYourFood.Customer.Domain/FindYourFood.Customer.Domain.csproj" />
+  <Project Path="FindYourFood.Customer.Infrastructure/FindYourFood.Customer.Infrastructure.csproj" />
+  <Project Path="FindYourFood.Customer.IntegrationTests/FindYourFood.Customer.IntegrationTests.csproj" />
+  <Project Path="FindYourFood.Customer.UnitTests/FindYourFood.Customer.UnitTests.csproj" />
+</Solution>

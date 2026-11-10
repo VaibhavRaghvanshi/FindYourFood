@@ -1,0 +1,15 @@
+:host { display: block; min-height: 100dvh; background: #fff9ee; color: #293a24; }
+main { width: min(760px, 100% - 36px); margin: auto; padding: 12px 0 40px; }
+h1 { font: 500 clamp(2.2rem, 5vw, 3.6rem)/1.1 Georgia, serif; }
+header img { border-radius: 12px; }
+fieldset { background: #fffdf7; border: 1px solid #d4d9cb; border-radius: 14px; margin: 14px 0; padding: 16px; }
+legend { font: 600 1.2rem Georgia, serif; }
+label { display: grid; gap: 4px; margin: 8px 0; }
+input:not([type=checkbox], [type=radio]) { max-width: 420px; border: 1px solid #667461; border-radius: 7px; padding: 9px; font: inherit; }
+.check { display: flex; align-items: center; gap: 6px; }
+.address, .favorite { border-top: 1px solid #d4d9cb; padding-block: 8px; }
+button { background: white; color: inherit; border: 1px solid #667461; border-radius: 7px; padding: 8px 12px; font: inherit; }
+button.primary { background: #365431; color: white; }
+button:disabled { opacity: .6; }
+a { color: #365431; }
+.favorite button { margin-inline-start: 10px; }
