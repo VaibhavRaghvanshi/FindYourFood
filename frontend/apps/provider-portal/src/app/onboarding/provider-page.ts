@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { MenuEditor } from '../menu/menu-editor';
 import {
   BranchDetails, documentKinds, ProviderApi, ProviderDetails, providerKinds, ProviderView, saveProviderDocument,
 } from '../../../../../shared/provider/provider-api';
@@ -14,13 +15,14 @@ const defaultBranch: BranchDetails = {
 
 @Component({
   selector: 'app-provider-page',
-  imports: [FormsModule],
+  imports: [FormsModule, MenuEditor],
   templateUrl: './provider-page.html',
   styleUrl: './provider-page.css',
 })
 export class ProviderPage {
   private readonly api = inject(ProviderApi);
-  private readonly token = signal('');
+  protected readonly token = signal('');
+  readonly menuBranch = signal<string | null>(null);
   readonly signedIn = computed(() => !!this.token());
   readonly register = signal(false);
   readonly busy = signal(false);
@@ -55,6 +57,7 @@ export class ProviderPage {
     this.profile.set(null);
     this.details.set(emptyApplication);
     this.loaded.set(false);
+    this.menuBranch.set(null);
     this.editBranch(null);
     this.password = '';
     this.error.set('');

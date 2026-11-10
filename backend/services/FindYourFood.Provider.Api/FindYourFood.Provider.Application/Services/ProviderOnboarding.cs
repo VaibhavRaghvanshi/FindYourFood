@@ -19,6 +19,10 @@ public sealed class ProviderOnboarding(IProviderRepository repository, IUnitOfWo
 
     public Task<IReadOnlyList<ProviderSummary>> PendingAsync(CancellationToken ct) => repository.PendingAsync(ct);
 
+    public async Task<bool> CanManageBranchAsync(Guid owner, Guid branch, CancellationToken ct) =>
+        await repository.FindOwnedAsync(owner, ct) is { Status: ProviderStatus.Approved } profile &&
+        await repository.BranchAsync(profile.Id, branch, ct) is not null;
+
     public async Task<VerificationDocument?> OwnedDocumentAsync(Guid owner, string kind, CancellationToken ct) =>
         ProviderRules.ValidDocumentKind(kind) && await repository.FindOwnedAsync(owner, ct) is { } profile
             ? await repository.DocumentAsync(profile.Id, kind, ct)

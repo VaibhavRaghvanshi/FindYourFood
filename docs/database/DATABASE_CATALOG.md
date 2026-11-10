@@ -8,7 +8,7 @@ The named local instance is `.\MSSQL22` on this machine. Four of the sixteen pla
 | `FindYourFood_OrganizationDb` | Applied |
 | `FindYourFood_CustomerDb` | Planned |
 | `FindYourFood_ProviderDb` | Applied |
-| `FindYourFood_CatalogDb` | Planned |
+| `FindYourFood_CatalogDb` | Applied |
 | `FindYourFood_DiscoveryDb` | Planned |
 | `FindYourFood_LocationDb` | Planned |
 | `FindYourFood_CartDb` | Planned |

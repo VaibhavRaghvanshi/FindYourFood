@@ -1,0 +1,54 @@
+<section aria-labelledby="branch-menu-heading">
+  <h2 id="branch-menu-heading">Branch menu</h2>
+  <button type="button" class="secondary" [disabled]="busy()" (click)="load()">Reload saved menu</button>
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p role="status">{{ notice() }}</p> }
+  @if (workspace(); as state) {
+    <p>{{ state.publishedVersion ? 'Live version ' + state.publishedVersion : 'No version published yet' }}</p>
+    <fieldset [disabled]="busy()">
+      <label for="menu-name">Menu name</label>
+      <input id="menu-name" maxlength="80" [ngModel]="menu().name" (ngModelChange)="name($event)" />
+      @for (item of menu().items; track item.id; let index = $index) {
+        <div class="item">
+          <h3>Item {{ index + 1 }}</h3>
+          <label [for]="'item-name-' + item.id">Item name</label>
+          <input [id]="'item-name-' + item.id" maxlength="80" [ngModel]="item.name" (ngModelChange)="updateItem(item.id, 'name', $event)" />
+          <label [for]="'category-' + item.id">Category</label>
+          <input [id]="'category-' + item.id" maxlength="40" [ngModel]="item.category" (ngModelChange)="updateItem(item.id, 'category', $event)" />
+          <label [for]="'description-' + item.id">Description</label>
+          <input [id]="'description-' + item.id" maxlength="180" [ngModel]="item.description" (ngModelChange)="updateItem(item.id, 'description', $event)" />
+          <label [for]="'price-' + item.id">Price in rupees</label>
+          <input [id]="'price-' + item.id" type="number" step="0.01" [ngModel]="item.priceMinor / 100"
+            (ngModelChange)="updateItem(item.id, 'priceMinor', minor($event))" />
+          <label><input type="checkbox" [ngModel]="item.available" (ngModelChange)="updateItem(item.id, 'available', $event)" /> Available</label>
+          @for (field of listFields; track field) {
+            <label [for]="field + '-' + item.id">{{ field }} (comma separated)</label>
+            <input #labels [id]="field + '-' + item.id" maxlength="330" [value]="item[field].join(', ')"
+              (change)="setList(item, field, labels.value)" />
+          }
+          @for (field of optionFields; track field) {
+            <h4>{{ field === 'variants' ? 'Variants' : 'Add-ons' }}</h4>
+            @for (choice of item[field]; track choice.id) {
+              <div class="options">
+                <label>Option name <input maxlength="40" [ngModel]="choice.name"
+                  (ngModelChange)="option(item, field, choice.id, { name: $event })" /></label>
+                <label>Extra rupees <input type="number" min="0" step="0.01" [ngModel]="choice.extraMinor / 100"
+                  (ngModelChange)="option(item, field, choice.id, { extraMinor: minor($event) })" /></label>
+                <button type="button" class="secondary" (click)="removeOption(item, field, choice.id)">Remove option</button>
+              </div>
+            }
+            <button type="button" class="secondary" [disabled]="item[field].length >= 5" (click)="addOption(item, field)">
+              Add {{ field === 'variants' ? 'variant' : 'add-on' }}
+            </button>
+          }
+          <button type="button" class="secondary remove" (click)="removeItem(item.id)">Remove item</button>
+        </div>
+      }
+      <div class="options">
+        <button type="button" class="secondary" [disabled]="menu().items.length >= 24" (click)="addItem()">Add item</button>
+        <button type="button" [disabled]="!dirty() || !menu().items.length" (click)="save()">Save menu draft</button>
+        <button type="button" [disabled]="dirty() || !state.hasUnpublishedChanges" (click)="publish()">Publish menu</button>
+      </div>
+    </fieldset>
+  }
+</section>

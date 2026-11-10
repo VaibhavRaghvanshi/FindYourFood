@@ -1,0 +1,88 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "catalog-public": {
+        "ClusterId": "catalog",
+        "AuthorizationPolicy": "Anonymous",
+        "Match": {
+          "Path": "/api/v1/catalog/branches/{branch}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "catalog-workspace": {
+        "ClusterId": "catalog",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/catalog/branches/{branch}/workspace",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "catalog-draft": {
+        "ClusterId": "catalog",
+        "AuthorizationPolicy": "Default",
+        "MaxRequestBodySize": 131072,
+        "Match": {
+          "Path": "/api/v1/catalog/branches/{branch}/draft",
+          "Methods": [
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "catalog-publish": {
+        "ClusterId": "catalog",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/catalog/branches/{branch}/publish",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "catalog": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5105/"
+          }
+        }
+      }
+    }
+  }
+}

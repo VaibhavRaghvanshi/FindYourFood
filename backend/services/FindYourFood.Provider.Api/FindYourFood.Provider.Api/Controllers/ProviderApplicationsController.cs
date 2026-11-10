@@ -57,4 +57,8 @@ public sealed class ProviderApplicationsController(ProviderOnboarding onboarding
     public async Task<ActionResult<ProviderView>> UpdateBranch(Guid id, UpdateBranchRequest request, CancellationToken ct) =>
         ProviderResponse(await onboarding.SaveBranchAsync(SubjectId, id, request, ct),
             "Check the branch address, time zone, opening hours and closure.");
+
+    [HttpGet("branches/{id:guid}/access")]
+    public async Task<IActionResult> BranchAccess(Guid id, CancellationToken ct) =>
+        await onboarding.CanManageBranchAsync(SubjectId, id, ct) ? NoContent() : NotFound();
 }

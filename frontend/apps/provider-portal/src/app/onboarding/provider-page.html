@@ -101,6 +101,9 @@
             <button class="secondary" type="button" [disabled]="busy()" (click)="editBranch(location.id)">
               Edit {{ location.details.name }}
             </button>
+            <button class="secondary" type="button" [disabled]="busy()" (click)="menuBranch.set(location.id)">
+              Manage menu for {{ location.details.name }}
+            </button>
           }
           <button class="secondary" type="button" [disabled]="busy()" (click)="editBranch(null)">New branch</button>
         </div>
@@ -146,6 +149,12 @@
           </fieldset>
         </form>
       </section>
+      @for (branchId of menuBranch() ? [menuBranch()!] : []; track branchId) {
+        <section class="panel branches">
+          <button type="button" class="secondary" (click)="menuBranch.set(null)">Close menu editor</button>
+          <app-menu-editor [branch]="branchId" [token]="token()" />
+        </section>
+      }
     }
   }
 </main>

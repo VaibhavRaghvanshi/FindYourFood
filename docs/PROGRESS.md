@@ -40,3 +40,9 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Used the supplied FindYourFood PNG as the shared frontend logo and favicon in the customer, staff, and provider apps. The built assets matched the source file's hash.
 - Passed 34 backend and 12 frontend unit and integration tests, including SQL-backed verification and branch operations.
 - Passed the browser flow for account creation, both document uploads, staff download and approval, and saving branch hours through YARP.
+
+## Catalog menus
+
+- Applied the initial migration to `FindYourFood_CatalogDb`. EF Core reported no pending model changes.
+- Approved branch owners can edit menus and publish immutable versions. Customers see the last published version, including ingredients, dietary tags, allergens, variants and add-ons.
+- Passed the Catalog unit test and SQL Server integration test for owner authorization, revision conflicts and publication visibility. All three Angular apps built.

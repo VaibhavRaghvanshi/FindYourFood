@@ -93,4 +93,15 @@ Open [the provider portal](http://localhost:4202) to create an account or sign i
 
 Run `.\scripts\Test-AdministrationBrowser.ps1 -Provider` with the same SQL and browser settings to test the complete flow with isolated databases.
 
+## Publish a branch menu
+
+With Identity, Organization, and Provider initialized, stop the current profile and run:
+
+```powershell
+.\scripts\Initialize-MarketplaceDatabase.ps1 -Service Catalog
+.\scripts\Start-MarketplaceEnvironment.ps1 -Services Catalog
+```
+
+Sign in to the provider portal as the approved branch owner. Open **Branches and hours**, select **Edit menu** for the branch, save the draft, and publish it. Open `/menu/{branchId}` in the customer app to see the live menu. See the [Catalog API contract](docs/api-contracts/CATALOG.md) for ownership and version checks.
+
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

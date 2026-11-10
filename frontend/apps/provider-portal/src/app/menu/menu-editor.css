@@ -1,0 +1,10 @@
+fieldset { padding: 0; border: 0; min-width: 0; margin: 10px 0 0; }
+label { display: block; margin: 4px 0; font-weight: 700; font-size: .9rem; text-transform: capitalize; }
+input:not([type='checkbox']) { display: block; box-sizing: border-box; width: 100%; min-height: 38px; padding: 7px; border: 1px solid #a1ab96; border-radius: 7px; background: #fffefa; font: inherit; margin-bottom: 8px; }
+.item { padding: 14px 0; border-top: 1px solid #d4d9cb; }
+.options { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { border: 1px solid transparent; border-radius: 7px; padding: 8px 12px; background: #344b2c; color: #fff9ed; font: inherit; font-weight: 700; cursor: pointer; }
+.secondary { background: #f2f3e9; color: #30402a; border-color: #b9bfab; }
+.remove { margin-left: 8px; }
+button:disabled { opacity: .55; cursor: default; }
+.error { color: #802a17; }

@@ -1,0 +1,37 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="84" height="84" alt="FindYourFood" /></a></header>
+  @if (publication(); as current) {
+    <h1>{{ current.menu.name }}</h1>
+    @for (category of categories(); track category) {
+      <section>
+        <h2>{{ category }}</h2>
+        <div class="items">
+          @for (item of current.menu.items; track item.id) {
+            @if (item.category === category) {
+              <article>
+                <h3>{{ item.name }}</h3>
+                <strong>{{ item.priceMinor / 100 | currency:current.currency }}</strong>
+                @if (!item.available) { <p>Currently unavailable</p> }
+                <p>{{ item.description }}</p>
+                @if (item.tags.length) { <p>{{ item.tags.join(' · ') }}</p> }
+                @if (item.ingredients.length) { <p>Ingredients {{ item.ingredients.join(', ') }}</p> }
+                @if (item.allergens.length) { <p>Allergens {{ item.allergens.join(', ') }}</p> }
+                @for (option of item.variants; track option.id) {
+                  <p>{{ option.name }} +{{ option.extraMinor / 100 | currency:current.currency }}</p>
+                }
+                @for (option of item.addOns; track option.id) {
+                  <p>{{ option.name }} +{{ option.extraMinor / 100 | currency:current.currency }}</p>
+                }
+              </article>
+            }
+          }
+        </div>
+      </section>
+    }
+  } @else if (loading()) {
+    <p role="status">Loading menu…</p>
+  } @else {
+    <h1>Menu unavailable</h1>
+    <p>This branch has no menu available right now.</p>
+  }
+</main>

@@ -13,6 +13,16 @@ if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>(
 {
     builder.Configuration.AddJsonFile("provider.routes.json", optional: false);
 }
+if (builder.Environment.IsDevelopment())
+{
+    foreach (var service in new[] { "Catalog", "Customer", "Location", "Discovery", "Cart", "Ordering" })
+    {
+        if (builder.Configuration.GetValue<bool>($"Gateway:Enable{service}"))
+        {
+            builder.Configuration.AddJsonFile($"{service.ToLowerInvariant()}.routes.json", optional: false);
+        }
+    }
+}
 builder.AddFindYourFoodHosting("FindYourFood.ApiGateway");
 TokenSettings.FromConfiguration(builder.Configuration).ConfigureBearer(builder.Services);
 builder.Services.AddHealthChecks();

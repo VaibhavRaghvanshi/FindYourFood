@@ -1,4 +1,6 @@
 #requires -Version 7.0
+[CmdletBinding()]
+param([switch]$SkipBuild)
 . "$PSScriptRoot/Development.ps1"
 
 $names = @('provider-frontend', 'admin-frontend', 'gateway', 'identity', 'organization', 'provider')
@@ -14,7 +16,9 @@ try {
   if (!(Test-Path -LiteralPath $env:Tokens__PublicKeyPath)) {
     throw 'Run Initialize-IdentityDatabase.ps1 to create the Identity public key first.'
   }
-  Invoke-Checked 'dotnet' @('build', 'FindYourFood.slnx', '-m:1', '/nodeReuse:false')
+  if (!$SkipBuild) {
+    Invoke-Checked 'dotnet' @('build', 'FindYourFood.slnx', '-m:1', '/nodeReuse:false')
+  }
   $privateSettings = @('ConnectionStrings__Identity', 'ConnectionStrings__Organization',
     'ConnectionStrings__Experience', 'Tokens__PrivateKeyPath')
   $saved = @{}

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <PackageReference Include="xunit" />
+    <ProjectReference Include="../../building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
+  </ItemGroup>
+</Project>
