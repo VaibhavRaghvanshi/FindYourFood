@@ -6,6 +6,8 @@ $identityApi = Join-Path $projectRoot 'backend/services/FindYourFood.Identity.Ap
 $identityInfrastructure = Join-Path $projectRoot 'backend/services/FindYourFood.Identity.Api/FindYourFood.Identity.Infrastructure'
 $organizationApi = Join-Path $projectRoot 'backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.Api'
 $organizationInfrastructure = Join-Path $projectRoot 'backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.Infrastructure'
+$experienceApi = Join-Path $projectRoot 'backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Api'
+$experienceInfrastructure = Join-Path $projectRoot 'backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Infrastructure'
 $gateway = Join-Path $projectRoot 'backend/gateway/FindYourFood.ApiGateway'
 $frontend = Join-Path $projectRoot 'frontend'
 
@@ -65,6 +67,15 @@ function Wait-ForEndpoint {
 function Set-OrganizationDevelopmentConfiguration {
   if (!$env:ConnectionStrings__Organization) {
     $env:ConnectionStrings__Organization = 'Server=.\MSSQL22;Database=FindYourFood_OrganizationDb;Integrated Security=True;Encrypt=True;TrustServerCertificate=True'
+  }
+  $env:ASPNETCORE_ENVIRONMENT = 'Development'
+  $env:DOTNET_ENVIRONMENT = 'Development'
+  $env:Tokens__PublicKeyPath = Join-Path $localState 'keys/identity-public.pem'
+}
+
+function Set-ExperienceDevelopmentConfiguration {
+  if (!$env:ConnectionStrings__Experience) {
+    $env:ConnectionStrings__Experience = 'Server=.\MSSQL22;Database=FindYourFood_ExperienceDb;Integrated Security=True;Encrypt=True;TrustServerCertificate=True'
   }
   $env:ASPNETCORE_ENVIRONMENT = 'Development'
   $env:DOTNET_ENVIRONMENT = 'Development'

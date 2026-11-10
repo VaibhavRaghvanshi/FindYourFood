@@ -3,7 +3,8 @@ namespace FindYourFood.Organization.Domain;
 public static class StaffAccess
 {
     public static bool IsKnownPermission(string? permission) => permission is
-        "provider.review" or "support.ticket.read" or "support.ticket.assign" or "finance.report.read";
+        "provider.review" or "support.ticket.read" or "support.ticket.assign" or "finance.report.read" or
+        "experience.edit" or "experience.publish";
 
     public static bool IsScope(string? scope)
     {

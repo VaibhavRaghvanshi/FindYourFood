@@ -6,6 +6,8 @@ export const permissions = [
   'support.ticket.read',
   'support.ticket.assign',
   'finance.report.read',
+  'experience.edit',
+  'experience.publish',
 ] as const;
 
 export const levels = ['Ceo', 'DepartmentHead', 'CityManager', 'TeamManager', 'Employee'] as const;

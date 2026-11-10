@@ -1,0 +1,132 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "experience-public": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "Anonymous",
+        "Match": {
+          "Path": "/api/v1/experience/customer-home",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-workspace": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-preview": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home/preview",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-approve": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home/approve",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-publish": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home/publish",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-rollback": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home/rollback",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "experience-draft": {
+        "ClusterId": "experience",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/experience/admin/customer-home/draft",
+          "Methods": [
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "experience": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5103/"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using FindYourFood.Experience.Infrastructure.Data;
 using FindYourFood.Identity.Application.Interfaces;
 using FindYourFood.Identity.Application.Services;
 using FindYourFood.Identity.Infrastructure;
@@ -12,6 +13,9 @@ using OtpNet;
 
 var identity = IsolatedConnection("ConnectionStrings__Identity", "FindYourFood_IdentityTest_");
 var organization = IsolatedConnection("ConnectionStrings__Organization", "FindYourFood_OrganizationTest_");
+var experience = args.Contains("--experience", StringComparer.Ordinal)
+    ? IsolatedConnection("ConnectionStrings__Experience", "FindYourFood_ExperienceTest_")
+    : null;
 var output = Required("FINDYOURFOOD_E2E_ACCOUNTS");
 var services = new ServiceCollection();
 services.AddLogging();
@@ -30,22 +34,32 @@ await using var provider = services.BuildServiceProvider();
 await using var scope = provider.CreateAsyncScope();
 var identityDatabase = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
 var organizationDatabase = scope.ServiceProvider.GetRequiredService<OrganizationDbContext>();
+await using var experienceDatabase = experience is null ? null : new ExperienceDbContext(
+    new DbContextOptionsBuilder<ExperienceDbContext>().UseSqlServer(experience).Options);
 
-if (args is ["--cleanup"])
+if (args.Any(argument => argument is not ("--cleanup" or "--experience")))
+{
+    throw new ArgumentException("Use --experience to include Experience or --cleanup to remove the isolated databases.");
+}
+
+if (args.Contains("--cleanup", StringComparer.Ordinal))
 {
     await identityDatabase.Database.EnsureDeletedAsync();
     await organizationDatabase.Database.EnsureDeletedAsync();
+    if (experienceDatabase is not null)
+    {
+        await experienceDatabase.Database.EnsureDeletedAsync();
+    }
     File.Delete(output);
     return;
 }
 
-if (args.Length != 0)
-{
-    throw new ArgumentException("Use no arguments to seed, or --cleanup to remove the isolated databases.");
-}
-
 await identityDatabase.Database.MigrateAsync();
 await organizationDatabase.Database.MigrateAsync();
+if (experienceDatabase is not null)
+{
+    await experienceDatabase.Database.MigrateAsync();
+}
 var accounts = scope.ServiceProvider.GetRequiredService<PrivilegedAccounts>();
 var enrollment = scope.ServiceProvider.GetRequiredService<IAuthenticatorEnrollment>();
 var owner = await EnrollAsync("owner", isOwner: true);

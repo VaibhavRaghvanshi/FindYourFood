@@ -1,0 +1,52 @@
+@let config = configuration();
+<div class="experience" [attr.data-palette]="config.palette" [attr.data-type]="config.typography">
+  <header class="brand-bar">
+    <div class="brand"><span aria-hidden="true">✳</span> {{ config.brand }}</div>
+    @if (config.showNavigation && config.navigation.length > 0) {
+      <nav aria-label="Customer navigation">
+        @for (link of config.navigation; track link.target) {
+          @if (preview()) {
+            <span>{{ link.label }}</span>
+          } @else {
+            <a [routerLink]="route(link.target)">{{ link.label }}</a>
+          }
+        }
+      </nav>
+    }
+  </header>
+
+  <div class="sections">
+    @for (section of config.sections; track section.kind) {
+      @switch (section.kind) {
+        @case ('hero') {
+          <section class="hero">
+            <div>
+              <p class="label">Made for the hungry</p>
+              @if (preview()) { <h3>{{ section.title }}</h3> } @else { <h1>{{ section.title }}</h1> }
+              <p>{{ section.body }}</p>
+              @if (preview()) {
+                <span class="account-link">Open account</span>
+              } @else {
+                <a class="account-link" routerLink="/">Open account</a>
+              }
+            </div>
+            <div class="plate" aria-hidden="true"><span>✳</span></div>
+          </section>
+        }
+        @case ('banner') {
+          <section class="banner">
+            <p class="label">Featured</p>
+            <h2>{{ section.title }}</h2>
+            <p>{{ section.body }}</p>
+          </section>
+        }
+        @case ('note') {
+          <section class="note">
+            <h2>{{ section.title }}</h2>
+            <p>{{ section.body }}</p>
+          </section>
+        }
+      }
+    }
+  </div>
+</div>

@@ -1,6 +1,6 @@
 # Database catalog
 
-The named local instance is `.\MSSQL22` on this machine. Each database below is reserved for its owner. Identity and Organization have migrations in their respective Infrastructure projects.
+The named local instance is `.\MSSQL22` on this machine. Each database below is reserved for its owner. Identity, Organization and Experience have migrations in their respective Infrastructure projects.
 
 | Database | Owner |
 | --- | --- |

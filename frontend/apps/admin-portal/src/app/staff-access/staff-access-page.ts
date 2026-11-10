@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { ExperienceEditor } from '../experience/experience-editor';
 import { Grant, levels, permissions, StaffAccessApi } from './staff-access-api';
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -9,14 +10,15 @@ const scope = /^\/(?:[a-z0-9-]{1,32}(?:\/[a-z0-9-]{1,32}){0,7})?$/;
 
 @Component({
   selector: 'app-staff-access',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ExperienceEditor],
   templateUrl: './staff-access-page.html',
   styleUrl: './staff-access-page.css',
 })
 export class StaffAccessPage {
   private readonly api = inject(StaffAccessApi);
   private readonly builder = inject(NonNullableFormBuilder);
-  private readonly token = signal('');
+  protected readonly token = signal('');
+  readonly section = signal<'staff' | 'experience'>('staff');
   readonly signedIn = computed(() => this.token().length > 0);
   readonly busy = signal(false);
   readonly error = signal('');
@@ -65,12 +67,18 @@ export class StaffAccessPage {
 
   signOut() {
     this.token.set('');
+    this.section.set('staff');
     this.grants.set([]);
     this.pendingRevoke.set(null);
     this.assignment.reset();
     this.permissionCheck.reset();
     this.notice.set('');
     this.error.set('');
+  }
+
+  expireSession() {
+    this.signOut();
+    this.error.set('Your session expired. Sign in again.');
   }
 
   async loadPage(page: number) {

@@ -56,6 +56,17 @@ Each enrollment prompts for a password and shows a time-based authenticator setu
 
 Open [the staff portal](http://localhost:4201). Organization listens on port 5102 and the gateway routes staff requests on port 5100. To use another local SQL Server instance, set `ConnectionStrings__Organization` with database name `FindYourFood_OrganizationDb`. See [the Organization contract](docs/api-contracts/ORGANIZATION.md) for permission and delegation rules.
 
+## Publish the customer homepage
+
+With Identity and Organization initialized and an owner enrolled, stop any running profile and use:
+
+```powershell
+.\scripts\Initialize-ExperienceDatabase.ps1
+.\scripts\Start-ExperienceEnvironment.ps1
+```
+
+Open [the staff portal](http://localhost:4201), sign in with MFA, and select **Customer experience**. Edit the theme and sections, validate the preview, save the draft, approve it, and publish. Open [the customer homepage](http://localhost:4200/home) to see the live release. The staff portal also restores prior releases. See [the Experience contract](docs/api-contracts/EXPERIENCE.md) for the supported schema and delegated permissions.
+
 ## Verify
 
 ```powershell
@@ -66,5 +77,7 @@ $env:FINDYOURFOOD_TEST_SQL = 'Server=.\MSSQL22;Integrated Security=True;Encrypt=
 SQL integration tests require database creation rights on the local instance and create a temporary, isolated database. For browser verification, start the integration environment, then set `FINDYOURFOOD_BROWSER` to `msedge` or `chrome` for an installed browser. Alternatively run `npx playwright install chromium` from the frontend folder. Run `.\scripts\Test-Services.ps1 -EndToEnd` to add browser and gateway checks. Browser registration creates a synthetic account in the development Identity database.
 
 For the staff browser test, stop the running profile and run `.\scripts\Test-AdministrationBrowser.ps1` with the same SQL and browser settings. It creates temporary databases and synthetic MFA accounts, exercises the staff portal through YARP, and cleans up the test profile.
+
+Run `.\scripts\Test-AdministrationBrowser.ps1 -Experience` to verify publishing, rollback and the customer fallback with isolated databases.
 
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

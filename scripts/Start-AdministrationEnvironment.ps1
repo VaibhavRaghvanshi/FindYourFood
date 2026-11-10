@@ -1,4 +1,6 @@
 #requires -Version 7.0
+[CmdletBinding()]
+param([switch]$SkipBuild)
 . "$PSScriptRoot/Development.ps1"
 
 foreach ($name in @('identity', 'gateway', 'organization', 'admin-frontend')) {
@@ -8,7 +10,9 @@ $previous = $env:Gateway__EnableOrganization
 Push-Location $projectRoot
 try {
   $env:Gateway__EnableOrganization = 'true'
-  Invoke-Checked 'dotnet' @('build', 'FindYourFood.slnx', '-m:1', '/nodeReuse:false')
+  if (!$SkipBuild) {
+    Invoke-Checked 'dotnet' @('build', 'FindYourFood.slnx', '-m:1', '/nodeReuse:false')
+  }
   & "$PSScriptRoot/Start-OrganizationEnvironment.ps1" -SkipBuild
   $organizationStarted = $true
   & "$PSScriptRoot/Start-IdentityEnvironment.ps1" -SkipBuild

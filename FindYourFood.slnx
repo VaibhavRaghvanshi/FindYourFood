@@ -7,6 +7,14 @@
     <Project Path="backend/gateway/FindYourFood.ApiGateway/FindYourFood.ApiGateway.csproj" />
   </Folder>
   <Folder Name="/backend/services/" />
+  <Folder Name="/backend/services/FindYourFood.Experience.Api/">
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Api/FindYourFood.Experience.Api.csproj" />
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Application/FindYourFood.Experience.Application.csproj" />
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Domain/FindYourFood.Experience.Domain.csproj" />
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.Infrastructure/FindYourFood.Experience.Infrastructure.csproj" />
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.IntegrationTests/FindYourFood.Experience.IntegrationTests.csproj" />
+    <Project Path="backend/services/FindYourFood.Experience.Api/FindYourFood.Experience.UnitTests/FindYourFood.Experience.UnitTests.csproj" />
+  </Folder>
   <Folder Name="/backend/services/FindYourFood.Identity.Api/">
     <Project Path="backend/services/FindYourFood.Identity.Api/FindYourFood.Identity.Api/FindYourFood.Identity.Api.csproj" />
     <Project Path="backend/services/FindYourFood.Identity.Api/FindYourFood.Identity.Application/FindYourFood.Identity.Application.csproj" />

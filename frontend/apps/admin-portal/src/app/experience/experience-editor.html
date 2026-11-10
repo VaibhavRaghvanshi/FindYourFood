@@ -1,0 +1,112 @@
+<section aria-labelledby="experience-workspace-heading">
+  <div class="workspace-heading">
+    <div>
+      <h2 id="experience-workspace-heading">Customer homepage</h2>
+      @if (workspace(); as current) {
+        <p>Draft {{ current.draftStatus }} · {{ current.publishedVersion ? 'Live version ' + current.publishedVersion : 'Bundled homepage is live' }}</p>
+      }
+    </div>
+    <button class="secondary" type="button" [disabled]="busy()" (click)="load()">Reload saved workspace</button>
+  </div>
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
+  @if (busy()) { <p role="status">Updating experience…</p> }
+
+  @if (workspace(); as current) {
+    <div class="editor-grid">
+      <div class="panel">
+        <fieldset [disabled]="busy()">
+          <legend>Theme and content</legend>
+          <label for="experience-brand">Brand label</label>
+          <input id="experience-brand" maxlength="40" [ngModel]="configuration().brand" (ngModelChange)="set('brand', $event)" />
+          <label for="experience-palette">Color palette</label>
+          <select id="experience-palette" [ngModel]="configuration().palette" (ngModelChange)="set('palette', $event)">
+            @for (palette of palettes; track palette) { <option [value]="palette">{{ palette }}</option> }
+          </select>
+          <label for="experience-type">Typography</label>
+          <select id="experience-type" [ngModel]="configuration().typography" (ngModelChange)="set('typography', $event)">
+            @for (type of typographyOptions; track type) { <option [value]="type">{{ type }}</option> }
+          </select>
+          <label class="check">
+            <input type="checkbox" [ngModel]="configuration().showNavigation" (ngModelChange)="set('showNavigation', $event)" />
+            Show navigation
+          </label>
+          @if (configuration().showNavigation) {
+            @for (item of navigationOptions; track item.target) {
+              <label class="check">
+                <input type="checkbox" [ngModel]="!!link(item.target)" (ngModelChange)="toggleLink(item, $event)" />
+                Include {{ item.label }} link
+              </label>
+              @if (link(item.target); as configured) {
+                <label [for]="'link-' + item.target">{{ item.label }} link label</label>
+                <input [id]="'link-' + item.target" maxlength="30" [ngModel]="configured.label"
+                  (ngModelChange)="setLinkLabel(item.target, $event)" />
+              }
+            }
+          }
+          @for (section of configuration().sections; track section.kind; let index = $index) {
+            <div class="section-editor">
+              <h3>{{ section.kind }}</h3>
+              <label [for]="'section-title-' + section.kind">{{ section.kind }} title</label>
+              <input [id]="'section-title-' + section.kind" maxlength="80" [ngModel]="section.title"
+                (ngModelChange)="setSection(section.kind, 'title', $event)" />
+              <label [for]="'section-body-' + section.kind">{{ section.kind }} body</label>
+              <input [id]="'section-body-' + section.kind" maxlength="280" [ngModel]="section.body"
+                (ngModelChange)="setSection(section.kind, 'body', $event)" />
+              <div class="actions">
+                <button class="secondary" type="button" [disabled]="index === 0" (click)="moveSection(index, -1)">Move {{ section.kind }} up</button>
+                <button class="secondary" type="button" [disabled]="index === configuration().sections.length - 1" (click)="moveSection(index, 1)">Move {{ section.kind }} down</button>
+                @if (section.kind !== 'hero') {
+                  <button class="secondary" type="button" (click)="removeSection(section.kind)">Remove {{ section.kind }}</button>
+                }
+              </div>
+            </div>
+          }
+          <div class="actions">
+            @for (section of optionalSections; track section.kind) {
+              @if (!hasSection(section.kind)) {
+                <button class="secondary" type="button" (click)="addSection(section)">Add {{ section.kind }}</button>
+              }
+            }
+          </div>
+        </fieldset>
+        <div class="actions workflow">
+          <button class="secondary" type="button" [disabled]="busy() || !valid()" (click)="validatePreview()">Validate preview</button>
+          <button type="button" [disabled]="busy() || !valid() || !dirty()" (click)="save()">Save draft</button>
+          <button type="button" [disabled]="busy() || dirty() || current.draftStatus !== 'draft'" (click)="transition('approve')">Approve draft</button>
+          <button type="button" [disabled]="busy() || dirty() || current.draftStatus !== 'approved'" (click)="transition('publish')">Publish homepage</button>
+        </div>
+      </div>
+
+      <div class="panel preview">
+        <h2>Customer preview</h2>
+        <fyf-experience-view [configuration]="preview()" [preview]="true" />
+      </div>
+    </div>
+
+    <section class="panel history" aria-labelledby="history-heading">
+      <h2 id="history-heading">Publication history</h2>
+      @if (!current.history.length) { <p>No publications yet.</p> }
+      @for (item of current.history; track item.version) {
+        <div class="release">
+          <div>
+            <strong>Version {{ item.version }}</strong> · {{ item.publishedAt | date:'medium' }}
+            @if (item.restoredFromVersion) { <span> · Restored from {{ item.restoredFromVersion }}</span> }
+          </div>
+          @if (item.version === current.publishedVersion) {
+            <span>Live</span>
+          } @else if (rollbackVersion() === item.version) {
+            <div class="actions">
+              <button type="button" [disabled]="busy() || dirty()" (click)="rollback(item.version)">Confirm restore</button>
+              <button class="secondary" type="button" (click)="rollbackVersion.set(null)">Cancel</button>
+            </div>
+          } @else {
+            <button class="secondary" type="button" [disabled]="busy() || dirty()" (click)="rollbackVersion.set(item.version)">
+              Restore version {{ item.version }}
+            </button>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>

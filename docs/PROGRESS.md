@@ -24,3 +24,11 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Grouped each service's solution, API, Application, Domain, Infrastructure, and test projects under `backend/services/FindYourFood.<Service>.Api`.
 - Moved the Identity and Organization routes into controllers and separated repository interfaces, EF Core repositories, and units of work. The owner enrollment and organization grant transactions use their own service DbContexts.
 - Built each service solution independently. EF Core found no pending model changes. See [API structure](architecture/API_STRUCTURE.md) for direct code paths.
+
+## Customer homepage Experience slice
+
+- Added the independent Experience API with controllers, application services, repository and unit of work. Applied the migration to `FindYourFood_ExperienceDb` and confirmed no pending model changes.
+- The staff portal can edit and preview a bounded homepage configuration, save a draft, approve it, publish a version and restore a prior publication. Each admin request checks Organization for the matching scoped permission.
+- Customer Angular renders the published version at `/home` with a shared component registry, a last validated release cache and a bundled fallback.
+- Both Angular apps built. Passed 29 backend and 10 frontend unit and integration tests. The backend tests covered concurrent saves, approval enforcement, rollback and permission outages.
+- Passed the browser publishing and rollback flow through YARP, the staff portal, Organization, Experience and the customer homepage. The browser retained the restored release during a simulated read outage.

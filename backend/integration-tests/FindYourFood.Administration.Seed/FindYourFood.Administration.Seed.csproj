@@ -6,5 +6,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../../services/FindYourFood.Identity.Api/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
     <ProjectReference Include="../../services/FindYourFood.Organization.Api/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Experience.Api/FindYourFood.Experience.Infrastructure/FindYourFood.Experience.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

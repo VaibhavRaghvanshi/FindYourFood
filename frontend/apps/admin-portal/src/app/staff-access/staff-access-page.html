@@ -1,14 +1,18 @@
 <header>
   <span class="brand">FindYourFood <span>Staff portal</span></span>
   @if (signedIn()) {
-    <button type="button" class="secondary" [disabled]="busy()" (click)="signOut()">Sign out</button>
+    <div class="row-actions">
+      <button type="button" class="secondary" [disabled]="busy()" [attr.aria-pressed]="section() === 'staff'" (click)="section.set('staff')">Staff permissions</button>
+      <button type="button" class="secondary" [disabled]="busy()" [attr.aria-pressed]="section() === 'experience'" (click)="section.set('experience')">Customer experience</button>
+      <button type="button" class="secondary" [disabled]="busy()" (click)="signOut()">Sign out</button>
+    </div>
   }
 </header>
 <main [class.signed-in]="signedIn()">
   <div class="intro">
     <p class="eyebrow">Administration</p>
-    <h1>{{ signedIn() ? 'Staff access' : 'Staff sign-in' }}</h1>
-    <p>{{ signedIn() ? 'Manage scoped permissions and check what your account can do.' : 'Use your enrolled staff account and current authenticator code.' }}</p>
+    <h1>{{ !signedIn() ? 'Staff sign-in' : section() === 'experience' ? 'Customer experience' : 'Staff access' }}</h1>
+    <p>{{ !signedIn() ? 'Use your enrolled staff account and current authenticator code.' : section() === 'experience' ? 'Configure and publish the customer homepage.' : 'Manage scoped permissions and check what your account can do.' }}</p>
   </div>
   @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
   @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
@@ -27,6 +31,8 @@
         </fieldset>
       </form>
     </section>
+  } @else if (section() === 'experience') {
+    <app-experience-editor [token]="token()" (sessionExpired)="expireSession()" />
   } @else {
     <div class="actions">
       <section class="panel" aria-labelledby="grant-heading">

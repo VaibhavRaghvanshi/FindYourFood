@@ -1,6 +1,6 @@
 # Service boundaries
 
-Identity and Organization have local development slices. The table records target capabilities and planned event contracts. Each gateway prefix is relative to `/api/v1/`.
+Identity, Organization and Experience have local development slices. The table records target capabilities and planned event contracts. Each gateway prefix is relative to `/api/v1/`.
 
 | Service | Gateway prefix | Authoritative capability | Planned event examples | Degraded behavior |
 | --- | --- | --- | --- | --- |
