@@ -20,8 +20,9 @@
             "tsConfig": "apps/customer-web/tsconfig.app.json",
             "assets": [
               {
-                "glob": "**/*",
-                "input": "apps/customer-web/public"
+                  "glob": "findyourfood-logo.png",
+                  "input": "shared/brand",
+                  "output": "brand"
               }
             ],
             "styles": ["apps/customer-web/src/styles.css"]
@@ -84,11 +85,77 @@
             "tsConfig": "apps/admin-portal/tsconfig.app.json",
             "assets": [
               {
-                "glob": "**/*",
-                "input": "apps/admin-portal/public"
+                  "glob": "findyourfood-logo.png",
+                  "input": "shared/brand",
+                  "output": "brand"
               }
             ],
             "styles": ["apps/admin-portal/src/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "apps/customer-web/proxy.conf.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "admin-portal:build:production"
+            },
+            "development": {
+              "buildTarget": "admin-portal:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    },
+    "provider-portal": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "apps/provider-portal",
+      "sourceRoot": "apps/provider-portal/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "apps/provider-portal/src/main.ts",
+            "tsConfig": "apps/provider-portal/tsconfig.app.json",
+            "assets": [
+              {
+                  "glob": "findyourfood-logo.png",
+                  "input": "shared/brand",
+                  "output": "brand"
+              }
+            ],
+            "styles": ["apps/provider-portal/src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -121,10 +188,10 @@
             },
             "configurations": {
               "production": {
-                "buildTarget": "admin-portal:build:production"
+                "buildTarget": "provider-portal:build:production"
             },
             "development": {
-              "buildTarget": "admin-portal:build:development"
+              "buildTarget": "provider-portal:build:development"
             }
           },
           "defaultConfiguration": "development"

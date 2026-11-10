@@ -1,24 +1,24 @@
 # Database catalog
 
-The named local instance is `.\MSSQL22` on this machine. Each database below is reserved for its owner. Identity, Organization and Experience have migrations in their respective Infrastructure projects.
+The named local instance is `.\MSSQL22` on this machine. Four of the sixteen planned service databases have applied local migrations. Each migration belongs to its service's Infrastructure project.
 
-| Database | Owner |
+| Database | Local migration status |
 | --- | --- |
-| `FindYourFood_IdentityDb` | Identity |
-| `FindYourFood_OrganizationDb` | Organization |
-| `FindYourFood_CustomerDb` | Customer |
-| `FindYourFood_ProviderDb` | Provider |
-| `FindYourFood_CatalogDb` | Catalog |
-| `FindYourFood_DiscoveryDb` | Discovery |
-| `FindYourFood_LocationDb` | Location |
-| `FindYourFood_CartDb` | Cart |
-| `FindYourFood_OrderingDb` | Ordering |
-| `FindYourFood_DeliveryDb` | Delivery |
-| `FindYourFood_PaymentDb` | Payment |
-| `FindYourFood_FinanceDb` | Finance |
-| `FindYourFood_NotificationDb` | Notification |
-| `FindYourFood_ExperienceDb` | Experience |
-| `FindYourFood_CampaignDb` | Campaign |
-| `FindYourFood_SupportDb` | Support |
+| `FindYourFood_IdentityDb` | Applied |
+| `FindYourFood_OrganizationDb` | Applied |
+| `FindYourFood_CustomerDb` | Planned |
+| `FindYourFood_ProviderDb` | Applied |
+| `FindYourFood_CatalogDb` | Planned |
+| `FindYourFood_DiscoveryDb` | Planned |
+| `FindYourFood_LocationDb` | Planned |
+| `FindYourFood_CartDb` | Planned |
+| `FindYourFood_OrderingDb` | Planned |
+| `FindYourFood_DeliveryDb` | Planned |
+| `FindYourFood_PaymentDb` | Planned |
+| `FindYourFood_FinanceDb` | Planned |
+| `FindYourFood_NotificationDb` | Planned |
+| `FindYourFood_ExperienceDb` | Applied |
+| `FindYourFood_CampaignDb` | Planned |
+| `FindYourFood_SupportDb` | Planned |
 
-Integration tests create and remove uniquely named `FindYourFood_IdentityTest_*` and `FindYourFood_OrganizationTest_*` databases. Use a local test SQL connection with database creation rights. A deployed service uses a separate runtime principal with privileges limited to its owned schema.
+Integration tests create and remove uniquely named `FindYourFood_<Service>Test_*` databases. Use a local test SQL connection with database creation rights. A deployed service uses a separate runtime principal with privileges limited to its owned schema.

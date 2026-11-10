@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ExperienceEditor } from '../experience/experience-editor';
+import { ProviderReviewPage } from '../provider-review/provider-review-page';
 import { Grant, levels, permissions, StaffAccessApi } from './staff-access-api';
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -10,7 +11,7 @@ const scope = /^\/(?:[a-z0-9-]{1,32}(?:\/[a-z0-9-]{1,32}){0,7})?$/;
 
 @Component({
   selector: 'app-staff-access',
-  imports: [ReactiveFormsModule, ExperienceEditor],
+  imports: [ReactiveFormsModule, ExperienceEditor, ProviderReviewPage],
   templateUrl: './staff-access-page.html',
   styleUrl: './staff-access-page.css',
 })
@@ -18,7 +19,7 @@ export class StaffAccessPage {
   private readonly api = inject(StaffAccessApi);
   private readonly builder = inject(NonNullableFormBuilder);
   protected readonly token = signal('');
-  readonly section = signal<'staff' | 'experience'>('staff');
+  readonly section = signal<'staff' | 'experience' | 'providers'>('staff');
   readonly signedIn = computed(() => this.token().length > 0);
   readonly busy = signal(false);
   readonly error = signal('');

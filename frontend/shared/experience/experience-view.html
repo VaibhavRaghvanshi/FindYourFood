@@ -1,7 +1,10 @@
 @let config = configuration();
 <div class="experience" [attr.data-palette]="config.palette" [attr.data-type]="config.typography">
   <header class="brand-bar">
-    <div class="brand"><span aria-hidden="true">✳</span> {{ config.brand }}</div>
+    <div class="brand">
+      <img src="/brand/findyourfood-logo.png" width="84" height="84" alt="FindYourFood" />
+      @if (config.brand !== 'FindYourFood') { <span>{{ config.brand }}</span> }
+    </div>
     @if (config.showNavigation && config.navigation.length > 0) {
       <nav aria-label="Customer navigation">
         @for (link of config.navigation; track link.target) {

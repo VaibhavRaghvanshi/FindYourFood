@@ -1,10 +1,12 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([switch]$Experience)
+param([switch]$Experience, [switch]$Provider)
 . "$PSScriptRoot/Development.ps1"
 
+if ($Experience -and $Provider) { throw 'Select one browser profile.' }
 $processNames = @('identity', 'gateway', 'organization', 'admin-frontend')
 if ($Experience) { $processNames += @('experience', 'frontend') }
+if ($Provider) { $processNames += @('provider', 'provider-frontend') }
 foreach ($name in $processNames) {
   if (Get-DevelopmentProcess $name) { throw "$name is already running. Stop the current profile first." }
 }
@@ -18,6 +20,8 @@ $original = @{
   Organization = $env:ConnectionStrings__Organization
   Experience = $env:ConnectionStrings__Experience
   ExperienceTests = $env:FINDYOURFOOD_E2E_EXPERIENCE
+  Provider = $env:ConnectionStrings__Provider
+  ProviderTests = $env:FINDYOURFOOD_E2E_PROVIDER
   Accounts = $env:FINDYOURFOOD_E2E_ACCOUNTS
 }
 $seed = 'backend/integration-tests/FindYourFood.Administration.Seed'
@@ -34,10 +38,16 @@ try {
   $identity['Initial Catalog'] = "FindYourFood_OrganizationTest_$run"
   $env:ConnectionStrings__Organization = $identity.get_ConnectionString()
   $env:FINDYOURFOOD_E2E_EXPERIENCE = if ($Experience) { 'true' } else { $null }
+  $env:FINDYOURFOOD_E2E_PROVIDER = if ($Provider) { 'true' } else { $null }
   if ($Experience) {
     $identity['Initial Catalog'] = "FindYourFood_ExperienceTest_$run"
     $env:ConnectionStrings__Experience = $identity.get_ConnectionString()
     $seedOptions += '--experience'
+  }
+  if ($Provider) {
+    $identity['Initial Catalog'] = "FindYourFood_ProviderTest_$run"
+    $env:ConnectionStrings__Provider = $identity.get_ConnectionString()
+    $seedOptions += '--provider'
   }
   Set-IdentityDevelopmentConfiguration
   $env:FINDYOURFOOD_E2E_ACCOUNTS = Join-Path $localState "admin-accounts-$run.json"
@@ -45,6 +55,8 @@ try {
   Invoke-Checked 'dotnet' (@('run', '--project', $seed, '--') + $seedOptions)
   if ($Experience) {
     & "$PSScriptRoot/Start-ExperienceEnvironment.ps1"
+  } elseif ($Provider) {
+    & "$PSScriptRoot/Start-ProviderEnvironment.ps1"
   } else {
     & "$PSScriptRoot/Start-AdministrationEnvironment.ps1"
   }
@@ -68,6 +80,8 @@ try {
     $env:ConnectionStrings__Organization = $original.Organization
     $env:ConnectionStrings__Experience = $original.Experience
     $env:FINDYOURFOOD_E2E_EXPERIENCE = $original.ExperienceTests
+    $env:ConnectionStrings__Provider = $original.Provider
+    $env:FINDYOURFOOD_E2E_PROVIDER = $original.ProviderTests
     $env:FINDYOURFOOD_E2E_ACCOUNTS = $original.Accounts
     Pop-Location
   }

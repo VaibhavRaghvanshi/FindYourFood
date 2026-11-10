@@ -32,6 +32,12 @@
     },
     {
       "path": "./apps/admin-portal/tsconfig.spec.json"
+    },
+    {
+      "path": "./apps/provider-portal/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/provider-portal/tsconfig.spec.json"
     }
   ]
 }

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve customer-web",
-    "build": "ng build customer-web && ng build admin-portal",
+    "build": "ng build customer-web && ng build admin-portal && ng build provider-portal",
     "watch": "ng build customer-web --watch --configuration development",
     "test": "ng test",
     "e2e": "playwright test",

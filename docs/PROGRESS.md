@@ -32,3 +32,11 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Customer Angular renders the published version at `/home` with a shared component registry, a last validated release cache and a bundled fallback.
 - Both Angular apps built. Passed 29 backend and 10 frontend unit and integration tests. The backend tests covered concurrent saves, approval enforcement, rollback and permission outages.
 - Passed the browser publishing and rollback flow through YARP, the staff portal, Organization, Experience and the customer homepage. The browser retained the restored release during a simulated read outage.
+
+## Provider onboarding slice
+
+- Added a separate Provider API, repository, and unit of work. Applied the initial migration to `FindYourFood_ProviderDb` for provider profiles, private verification files, branches, and review audit records. EF Core reported no pending model changes.
+- The provider portal supports account creation, applications, document upload, resubmission, business settings, branch addresses, weekly hours and temporary closures. Staff can review applications through MFA and a live scoped Organization permission check.
+- Used the supplied FindYourFood PNG as the shared frontend logo and favicon in the customer, staff, and provider apps. The built assets matched the source file's hash.
+- Passed 34 backend and 12 frontend unit and integration tests, including SQL-backed verification and branch operations.
+- Passed the browser flow for account creation, both document uploads, staff download and approval, and saving branch hours through YARP.

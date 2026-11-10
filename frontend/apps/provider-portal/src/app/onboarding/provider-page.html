@@ -1,0 +1,151 @@
+<header class="topbar">
+  <img src="/brand/findyourfood-logo.png" width="90" height="90" alt="FindYourFood" />
+  <span>Provider portal</span>
+  @if (signedIn()) {
+    <button class="secondary" type="button" [disabled]="busy()" (click)="signOut()">Sign out</button>
+  }
+</header>
+
+<main [class.workspace]="signedIn()">
+  <section class="intro">
+    <p class="eyebrow">FindYourFood partners</p>
+    <h1>{{ signedIn() ? 'Your provider workspace' : 'Bring your food to more people' }}</h1>
+    <p>{{ signedIn() ? 'Manage your application, documents and branches.' : 'Apply to join FindYourFood and set up your locations.' }}</p>
+  </section>
+
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
+  @if (busy()) { <p role="status">Working…</p> }
+
+  @if (!signedIn()) {
+    <section class="panel">
+      <h2>{{ register() ? 'Create an account' : 'Sign in' }}</h2>
+      <form #accountForm="ngForm" (ngSubmit)="signIn()">
+        <fieldset [disabled]="busy()">
+          <label for="email">Email address</label>
+          <input id="email" type="email" name="email" autocomplete="username" required email maxlength="254" [(ngModel)]="email" />
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" required maxlength="128"
+            [attr.autocomplete]="register() ? 'new-password' : 'current-password'" [(ngModel)]="password" />
+          <div class="actions">
+            <button type="submit" [disabled]="accountForm.invalid">{{ register() ? 'Create account' : 'Sign in' }}</button>
+            <button class="secondary" type="button" (click)="register.set(!register())">
+              {{ register() ? 'Use an existing account' : 'Create an account' }}
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  } @else {
+    <div class="status-bar">
+      <span class="status">{{ profile()?.status || 'New application' }}</span>
+      @if (profile(); as current) { <small>Provider ID {{ current.id }}</small> }
+      <button class="secondary" type="button" [disabled]="busy()" (click)="refresh()">Refresh application</button>
+    </div>
+    @if (loaded()) {
+      <div class="columns">
+        <section class="panel" aria-labelledby="application-heading">
+          <h2 id="application-heading">Business application</h2>
+          @if (profile()?.reviewNote; as note) { <p class="message">{{ note }}</p> }
+          <form #applicationForm="ngForm" (ngSubmit)="saveApplication()">
+            <fieldset [disabled]="busy() || currentStatusIsSubmitted()">
+              <label for="business-name">Business name</label>
+              <input id="business-name" name="name" required maxlength="100" [disabled]="!canEdit()" [ngModel]="details().name" (ngModelChange)="editDetails('name', $event)" />
+              <label for="business-type">Business type</label>
+              <select id="business-type" name="kind" [disabled]="!canEdit()" [ngModel]="details().kind" (ngModelChange)="editDetails('kind', $event)">
+                @for (kind of kinds; track kind[0]) { <option [value]="kind[0]">{{ kind[1] }}</option> }
+              </select>
+              <label for="contact-email">Business contact email</label>
+              <input id="contact-email" type="email" name="contact" required email maxlength="254"
+                [ngModel]="details().contactEmail" (ngModelChange)="editDetails('contactEmail', $event)" />
+              <label for="description">Business description</label>
+              <textarea id="description" name="description" required maxlength="400"
+                [ngModel]="details().description" (ngModelChange)="editDetails('description', $event)"></textarea>
+              <button type="submit" [disabled]="applicationForm.invalid">{{ canEdit() ? 'Save application' : 'Save business settings' }}</button>
+            </fieldset>
+          </form>
+        </section>
+        @if (profile(); as current) {
+          <section class="panel" aria-labelledby="documents-heading">
+            <h2 id="documents-heading">Verification documents</h2>
+            <p>PDF, PNG or JPEG, up to 2 MB per file.</p>
+            @for (kind of documentKinds; track kind[0]) {
+              <div class="document">
+                @if (canEdit()) {
+                  <label [for]="'document-' + kind[0]">{{ kind[1] }}</label>
+                  <input #file [id]="'document-' + kind[0]" type="file" accept=".pdf,.png,.jpg,.jpeg" [disabled]="busy()"
+                    (change)="upload(kind[0], file)" />
+                }
+                @for (document of current.documents; track document.kind) {
+                  @if (document.kind === kind[0]) {
+                    <button class="secondary" type="button" [disabled]="busy()" (click)="download(kind[0])">Download {{ kind[1] }}</button>
+                  }
+                }
+              </div>
+            }
+            @if (canEdit()) {
+              <button type="button" [disabled]="busy() || current.documents.length !== 2" (click)="submit()">Submit for review</button>
+            } @else if (current.status === 'submitted') {
+              <p>Your application is with the review team.</p>
+            }
+          </section>
+        }
+      </div>
+    }
+
+    @if (profile()?.status === 'approved') {
+      <section class="panel branches" aria-labelledby="branches-heading">
+        <h2 id="branches-heading">Branches and hours</h2>
+        <div class="actions">
+          @for (location of profile()!.branches; track location.id) {
+            <button class="secondary" type="button" [disabled]="busy()" (click)="editBranch(location.id)">
+              Edit {{ location.details.name }}
+            </button>
+          }
+          <button class="secondary" type="button" [disabled]="busy()" (click)="editBranch(null)">New branch</button>
+        </div>
+        <form #branchForm="ngForm" (ngSubmit)="saveBranch()">
+          <fieldset [disabled]="busy()">
+            <div class="columns branch-fields">
+              <div>
+                <label for="branch-name">Branch name</label>
+                <input id="branch-name" name="branchName" required maxlength="100" [ngModel]="branch().name"
+                  (ngModelChange)="editBranchField('name', $event)" />
+                <label for="branch-address">Street address</label>
+                <input id="branch-address" name="address" required maxlength="240" [ngModel]="branch().address"
+                  (ngModelChange)="editBranchField('address', $event)" />
+                <label for="branch-city">City</label>
+                <input id="branch-city" name="city" required maxlength="80" [ngModel]="branch().city"
+                  (ngModelChange)="editBranchField('city', $event)" />
+                <label for="branch-zone">Time zone</label>
+                <input id="branch-zone" name="zone" required maxlength="80" placeholder="Asia/Kolkata"
+                  [ngModel]="branch().timeZone" (ngModelChange)="editBranchField('timeZone', $event)" />
+                <label for="branch-closure">Temporarily closed until (device time)</label>
+                <input id="branch-closure" name="closure" type="datetime-local" [ngModel]="closure()" (ngModelChange)="closure.set($event)" />
+                <small>Clear this field to resume the branch’s regular hours.</small>
+              </div>
+              <div>
+                <h3>Weekly opening hours</h3>
+                @for (day of weekdays; track day; let index = $index) {
+                  <div class="day-row">
+                    <label>
+                      <input type="checkbox" [name]="'day-' + index" [ngModel]="!!hours(index + 1)"
+                        (ngModelChange)="toggleDay(index + 1, $event)" /> {{ day }}
+                    </label>
+                    @if (hours(index + 1); as entry) {
+                      <input type="time" required [name]="'opens-' + index" [attr.aria-label]="day + ' opens'"
+                        [ngModel]="entry.opens" (ngModelChange)="editHours(index + 1, 'opens', $event)" />
+                      <input type="time" required [name]="'closes-' + index" [attr.aria-label]="day + ' closes'"
+                        [ngModel]="entry.closes" (ngModelChange)="editHours(index + 1, 'closes', $event)" />
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+            <button type="submit" [disabled]="branchForm.invalid || !branch().hours.length">Save branch</button>
+          </fieldset>
+        </form>
+      </section>
+    }
+  }
+</main>

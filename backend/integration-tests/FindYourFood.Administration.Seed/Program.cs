@@ -5,6 +5,7 @@ using FindYourFood.Identity.Application.Services;
 using FindYourFood.Identity.Infrastructure;
 using FindYourFood.Identity.Infrastructure.Persistence;
 using FindYourFood.Organization.Infrastructure;
+using FindYourFood.Provider.Infrastructure.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,9 @@ var identity = IsolatedConnection("ConnectionStrings__Identity", "FindYourFood_I
 var organization = IsolatedConnection("ConnectionStrings__Organization", "FindYourFood_OrganizationTest_");
 var experience = args.Contains("--experience", StringComparer.Ordinal)
     ? IsolatedConnection("ConnectionStrings__Experience", "FindYourFood_ExperienceTest_")
+    : null;
+var providerConnection = args.Contains("--provider", StringComparer.Ordinal)
+    ? IsolatedConnection("ConnectionStrings__Provider", "FindYourFood_ProviderTest_")
     : null;
 var output = Required("FINDYOURFOOD_E2E_ACCOUNTS");
 var services = new ServiceCollection();
@@ -36,10 +40,12 @@ var identityDatabase = scope.ServiceProvider.GetRequiredService<IdentityDbContex
 var organizationDatabase = scope.ServiceProvider.GetRequiredService<OrganizationDbContext>();
 await using var experienceDatabase = experience is null ? null : new ExperienceDbContext(
     new DbContextOptionsBuilder<ExperienceDbContext>().UseSqlServer(experience).Options);
+await using var providerDatabase = providerConnection is null ? null : new ProviderDbContext(
+    new DbContextOptionsBuilder<ProviderDbContext>().UseSqlServer(providerConnection).Options);
 
-if (args.Any(argument => argument is not ("--cleanup" or "--experience")))
+if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider")))
 {
-    throw new ArgumentException("Use --experience to include Experience or --cleanup to remove the isolated databases.");
+    throw new ArgumentException("Use --experience or --provider to include a service, and --cleanup to remove isolated databases.");
 }
 
 if (args.Contains("--cleanup", StringComparer.Ordinal))
@@ -50,6 +56,10 @@ if (args.Contains("--cleanup", StringComparer.Ordinal))
     {
         await experienceDatabase.Database.EnsureDeletedAsync();
     }
+    if (providerDatabase is not null)
+    {
+        await providerDatabase.Database.EnsureDeletedAsync();
+    }
     File.Delete(output);
     return;
 }
@@ -59,6 +69,10 @@ await organizationDatabase.Database.MigrateAsync();
 if (experienceDatabase is not null)
 {
     await experienceDatabase.Database.MigrateAsync();
+}
+if (providerDatabase is not null)
+{
+    await providerDatabase.Database.MigrateAsync();
 }
 var accounts = scope.ServiceProvider.GetRequiredService<PrivilegedAccounts>();
 var enrollment = scope.ServiceProvider.GetRequiredService<IAuthenticatorEnrollment>();

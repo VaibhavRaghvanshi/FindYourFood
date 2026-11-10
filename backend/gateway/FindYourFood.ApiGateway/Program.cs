@@ -9,6 +9,10 @@ if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>(
 {
     builder.Configuration.AddJsonFile("experience.routes.json", optional: false);
 }
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("Gateway:EnableProvider"))
+{
+    builder.Configuration.AddJsonFile("provider.routes.json", optional: false);
+}
 builder.AddFindYourFoodHosting("FindYourFood.ApiGateway");
 TokenSettings.FromConfiguration(builder.Configuration).ConfigureBearer(builder.Services);
 builder.Services.AddHealthChecks();

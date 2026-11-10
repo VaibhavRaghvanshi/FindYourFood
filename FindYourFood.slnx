@@ -31,4 +31,12 @@
     <Project Path="backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.IntegrationTests/FindYourFood.Organization.IntegrationTests.csproj" />
     <Project Path="backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.UnitTests/FindYourFood.Organization.UnitTests.csproj" />
   </Folder>
+  <Folder Name="/backend/services/FindYourFood.Provider.Api/">
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.Api/FindYourFood.Provider.Api.csproj" />
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.Application/FindYourFood.Provider.Application.csproj" />
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.Domain/FindYourFood.Provider.Domain.csproj" />
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.Infrastructure/FindYourFood.Provider.Infrastructure.csproj" />
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.IntegrationTests/FindYourFood.Provider.IntegrationTests.csproj" />
+    <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.UnitTests/FindYourFood.Provider.UnitTests.csproj" />
+  </Folder>
 </Solution>

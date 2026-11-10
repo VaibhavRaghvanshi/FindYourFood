@@ -1,0 +1,41 @@
+.topbar {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 10px max(20px, calc((100vw - 1060px) / 2)); background: #293a24; color: #fff9ed;
+}
+.topbar img { object-fit: contain; background: white; border-radius: 12px; }
+.topbar span { font-weight: 800; }
+.topbar button { margin-left: auto; }
+main { width: min(100% - 36px, 550px); margin: 32px auto; }
+main.workspace { width: min(100% - 36px, 1060px); }
+h1 { font: 500 clamp(2rem, 5vw, 3.6rem)/1 Georgia, serif; letter-spacing: -0.04em; margin: 0; }
+h2 { font-size: 1.15rem; margin: 0 0 14px; }
+h3 { font-size: 1rem; margin: 0 0 8px; }
+.intro p, small { color: #526147; }
+.intro .eyebrow { color: #924b1c; text-transform: uppercase; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; }
+.panel { padding: clamp(16px, 4vw, 24px); background: #fffdf6; border: 1px solid #d4d9cb; border-radius: 14px; min-width: 0; }
+.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+label { display: block; margin: 0 0 5px; font-size: 0.9rem; font-weight: 750; }
+input:not([type='checkbox']), select, textarea {
+  box-sizing: border-box; width: 100%; min-height: 40px; margin-bottom: 12px; padding: 8px;
+  border: 1px solid #a1ab96; border-radius: 7px; background: #fffefa; color: inherit; font: inherit;
+}
+textarea { min-height: 90px; resize: vertical; }
+button {
+  min-height: 40px; padding: 8px 12px; border: 1px solid transparent; border-radius: 7px;
+  background: #344b2c; color: #fff9ed; font: inherit; font-weight: 750; cursor: pointer;
+}
+button.secondary { background: #f2f3e9; color: #30402a; border-color: #b9bfab; }
+button:disabled { opacity: 0.55; cursor: default; }
+:where(button, input, select, textarea):focus-visible { outline: 3px solid #ac5822; outline-offset: 3px; }
+.actions, .status-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.status-bar { margin: 0 0 12px; }
+.status { text-transform: capitalize; padding: 6px 10px; border-radius: 12px; background: #e7eddc; font-weight: 700; }
+.message { border-radius: 8px; padding: 10px 12px; background: #f1eddc; }
+.error { color: #802a17; background: #fce8df; }
+.success { color: #2d4a24; background: #e4edd7; }
+.document, .branch-fields, .branches { margin-top: 14px; }
+.document { margin-bottom: 12px; }
+.day-row { display: grid; grid-template-columns: 105px 1fr 1fr; gap: 5px; align-items: center; }
+.day-row input[type='time'] { margin-bottom: 4px; min-width: 0; }
+@media (max-width: 730px) { .columns { grid-template-columns: 1fr; } }

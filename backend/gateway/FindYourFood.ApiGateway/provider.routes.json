@@ -1,0 +1,180 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "provider-applications": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/providers/me",
+          "Methods": [
+            "GET",
+            "POST",
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-upload": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "MaxRequestBodySize": 2100000,
+        "Match": {
+          "Path": "/api/v1/providers/me/documents/{kind}",
+          "Methods": [
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-owner-download": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/providers/me/documents/{kind}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-submit": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/providers/me/submit",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-create-branch": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/providers/me/branches",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-update-branch": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/providers/me/branches/{id}",
+          "Methods": [
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-queue": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/providers/admin",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-review-details": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/providers/admin/{id}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-review-download": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/providers/admin/{id}/documents/{kind}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "provider-review": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/providers/admin/{id}/review",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "provider": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5104/"
+          }
+        }
+      }
+    }
+  }
+}

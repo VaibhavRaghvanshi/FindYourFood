@@ -27,8 +27,8 @@
   display: flex; gap: 16px; justify-content: space-between; align-items: center; flex-wrap: wrap;
   border-bottom: 1px solid var(--soft);
 }
-.brand { font-size: 1.2rem; font-weight: 800; }
-.brand span { padding: 5px 9px; border-radius: 10px; color: var(--primary); background: var(--accent); }
+.brand { display: flex; gap: 12px; align-items: center; font-size: 1.2rem; font-weight: 800; }
+.brand img { border-radius: 12px; background: white; object-fit: contain; }
 nav { display: flex; gap: 16px; flex-wrap: wrap; }
 a { color: inherit; text-underline-offset: 3px; }
 a:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }

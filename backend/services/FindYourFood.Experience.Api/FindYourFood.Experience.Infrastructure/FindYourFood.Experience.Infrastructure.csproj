@@ -2,6 +2,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../FindYourFood.Experience.Application/FindYourFood.Experience.Application.csproj" />
+    <ProjectReference Include="../../../building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" />
   </ItemGroup>

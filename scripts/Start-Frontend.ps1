@@ -1,10 +1,11 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([switch]$Admin)
+param([switch]$Admin, [switch]$Provider)
 . "$PSScriptRoot/Development.ps1"
-$name = if ($Admin) { 'admin-frontend' } else { 'frontend' }
-$app = if ($Admin) { 'admin-portal' } else { 'customer-web' }
-$port = if ($Admin) { '4201' } else { '4200' }
+if ($Admin -and $Provider) { throw 'Select one frontend.' }
+$name = if ($Admin) { 'admin-frontend' } elseif ($Provider) { 'provider-frontend' } else { 'frontend' }
+$app = if ($Admin) { 'admin-portal' } elseif ($Provider) { 'provider-portal' } else { 'customer-web' }
+$port = if ($Admin) { '4201' } elseif ($Provider) { '4202' } else { '4200' }
 $url = "http://localhost:$port"
 if (Get-DevelopmentProcess $name) { throw "$app is already running." }
 if (!(Test-Path -LiteralPath (Join-Path $frontend 'node_modules/@angular/cli/bin/ng.js'))) {
@@ -12,7 +13,8 @@ if (!(Test-Path -LiteralPath (Join-Path $frontend 'node_modules/@angular/cli/bin
 }
 
 $env:NG_CLI_ANALYTICS = 'false'
-$privateSettings = @('ConnectionStrings__Identity', 'ConnectionStrings__Organization', 'Tokens__PrivateKeyPath')
+$privateSettings = @('ConnectionStrings__Identity', 'ConnectionStrings__Organization',
+  'ConnectionStrings__Experience', 'ConnectionStrings__Provider', 'Tokens__PrivateKeyPath')
 $saved = @{}
 try {
   foreach ($key in $privateSettings) {

@@ -80,4 +80,17 @@ For the staff browser test, stop the running profile and run `.\scripts\Test-Adm
 
 Run `.\scripts\Test-AdministrationBrowser.ps1 -Experience` to verify publishing, rollback and the customer fallback with isolated databases.
 
+## Run provider onboarding
+
+With Identity and Organization initialized, stop any running profile and run:
+
+```powershell
+.\scripts\Initialize-ProviderDatabase.ps1
+.\scripts\Start-ProviderEnvironment.ps1
+```
+
+Open [the provider portal](http://localhost:4202) to create an account or sign in, save an application, upload the two verification documents, and submit. From [the staff portal](http://localhost:4201), sign in with MFA and select **Provider review**. After approval, the provider can set up branches, weekly opening hours, and temporary closures. See the [Provider API contract](docs/api-contracts/PROVIDER.md) for scoped permissions and limits.
+
+Run `.\scripts\Test-AdministrationBrowser.ps1 -Provider` with the same SQL and browser settings to test the complete flow with isolated databases.
+
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

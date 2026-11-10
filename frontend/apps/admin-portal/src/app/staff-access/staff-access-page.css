@@ -7,7 +7,8 @@ header {
   align-items: center;
   gap: 16px;
 }
-.brand { font-weight: 800; }
+.brand { display: flex; align-items: center; font-weight: 800; }
+.brand img { border-radius: 12px; background: white; object-fit: contain; }
 .brand span { margin-inline-start: 8px; color: #efbd81; font-size: 0.85rem; }
 main { width: min(100% - 40px, 470px); margin: 44px auto; }
 main.signed-in { width: min(100% - 40px, 1060px); }

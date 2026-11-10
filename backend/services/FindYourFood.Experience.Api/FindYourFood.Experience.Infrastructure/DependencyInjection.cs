@@ -5,6 +5,7 @@ using FindYourFood.Experience.Infrastructure.Data;
 using FindYourFood.Experience.Infrastructure.Integrations;
 using FindYourFood.Experience.Infrastructure.Repositories;
 using FindYourFood.Experience.Infrastructure.UnitOfWork;
+using FindYourFood.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,11 +22,8 @@ public static class DependencyInjection
         services.AddScoped<ExperiencePublishing>();
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IPublishedExperienceCache, PublishedExperienceCache>();
-        services.AddHttpClient<IExperienceAccess, OrganizationExperienceAccess>(client =>
-        {
-            client.BaseAddress = organization;
-            client.Timeout = TimeSpan.FromSeconds(3);
-        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+        services.AddOrganizationPermissionClient(organization);
+        services.AddScoped<IExperienceAccess, OrganizationExperienceAccess>();
         return services;
     }
 }

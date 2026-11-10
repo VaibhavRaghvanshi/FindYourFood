@@ -1,0 +1,69 @@
+<section aria-labelledby="provider-review-heading">
+  <div class="actions heading">
+    <h2 id="provider-review-heading">Provider applications</h2>
+    <button class="secondary" type="button" [disabled]="busy()" (click)="refresh()">Refresh queue</button>
+  </div>
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p class="message success" role="status">{{ notice() }}</p> }
+  @if (busy()) { <p role="status">Working on provider review…</p> }
+
+  <div class="review-layout">
+    <div class="panel">
+      <h3>Pending review</h3>
+      @if (queueRestricted()) {
+        <p>Your permission is limited to assigned providers. Open an application by ID.</p>
+      } @else if (!queue().length && !busy()) {
+        <p>No applications are waiting.</p>
+      }
+      <ul>
+        @for (provider of queue(); track provider.id) {
+          <li>
+            <button class="secondary" type="button" [disabled]="busy()" (click)="open(provider.id)">
+              Review {{ provider.name }}
+            </button>
+          </li>
+        }
+      </ul>
+      <form (ngSubmit)="open(lookupId)">
+        <label for="provider-id">Provider ID</label>
+        <input id="provider-id" name="providerId" [(ngModel)]="lookupId" maxlength="36" />
+        <button type="submit" [disabled]="busy()">Open application</button>
+      </form>
+    </div>
+
+    @if (selected(); as application) {
+      <div class="panel">
+        <h3>{{ application.details.name }}</h3>
+        <p>{{ application.details.kind }} · {{ application.status }}</p>
+        <p>{{ application.details.description }}</p>
+        <p>{{ application.details.contactEmail }}</p>
+        @if (application.status === 'submitted' || application.status === 'approved') {
+          <h4>Verification documents</h4>
+          <div class="actions">
+            @for (kind of documentKinds; track kind[0]) {
+              @for (document of application.documents; track document.kind) {
+                @if (kind[0] === document.kind) {
+                  <button class="secondary" type="button" [disabled]="busy()" (click)="download(kind[0])">Download {{ kind[1] }}</button>
+                }
+              }
+            }
+          </div>
+        }
+        @if (application.status === 'submitted') {
+          <label for="review-note">Review note</label>
+          <textarea id="review-note" [(ngModel)]="note" maxlength="300" [disabled]="busy()"></textarea>
+          <div class="actions">
+            <button type="button" [disabled]="busy()" (click)="decide(true)">Approve provider</button>
+            <button class="danger" type="button" [disabled]="busy() || !note.trim()" (click)="decide(false)">Reject application</button>
+          </div>
+        }
+        @if (application.reviews.length) {
+          <h4>Review history</h4>
+          @for (decision of application.reviews; track decision.id) {
+            <p>{{ decision.approved ? 'Approved' : 'Rejected' }} @if (decision.note) { · {{ decision.note }} }</p>
+          }
+        }
+      </div>
+    }
+  </div>
+</section>
