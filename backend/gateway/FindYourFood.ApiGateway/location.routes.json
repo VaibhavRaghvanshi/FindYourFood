@@ -1,6 +1,12 @@
 {
   "ReverseProxy": {
     "Routes": {
+      "location-matrix": {
+        "ClusterId": "location",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 131072,
+        "Match": { "Path": "/api/v1/location/coverage-matrix", "Methods": ["POST"] }
+      },
       "location-quote": {
         "ClusterId": "location",
         "AuthorizationPolicy": "Anonymous",

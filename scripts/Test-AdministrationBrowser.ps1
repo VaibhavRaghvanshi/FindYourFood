@@ -1,12 +1,14 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([switch]$Experience, [switch]$Provider)
+param([switch]$Experience, [switch]$Provider, [switch]$Marketplace)
 . "$PSScriptRoot/Development.ps1"
 
+if ($Marketplace) { $Provider = $true }
 if ($Experience -and $Provider) { throw 'Select one browser profile.' }
 $processNames = @('identity', 'gateway', 'organization', 'admin-frontend')
 if ($Experience) { $processNames += @('experience', 'frontend') }
 if ($Provider) { $processNames += @('provider', 'provider-frontend') }
+if ($Marketplace) { $processNames += @('catalog', 'customer', 'location', 'discovery', 'frontend') }
 foreach ($name in $processNames) {
   if (Get-DevelopmentProcess $name) { throw "$name is already running. Stop the current profile first." }
 }
@@ -29,6 +31,12 @@ $run = [guid]::NewGuid().ToString('N')
 $readyToClean = $false
 $profileStarted = $false
 $seedOptions = @()
+$marketplaceOriginal = @{}
+foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery')) {
+  $key = "ConnectionStrings__$service"
+  $marketplaceOriginal[$key] = [Environment]::GetEnvironmentVariable($key)
+}
+$marketplaceFlag = $env:FINDYOURFOOD_E2E_MARKETPLACE
 try {
   $identity = [Data.Common.DbConnectionStringBuilder]::new()
   $identity.set_ConnectionString($env:FINDYOURFOOD_TEST_SQL)
@@ -49,12 +57,22 @@ try {
     $env:ConnectionStrings__Provider = $identity.get_ConnectionString()
     $seedOptions += '--provider'
   }
+  $env:FINDYOURFOOD_E2E_MARKETPLACE = if ($Marketplace) { 'true' } else { $null }
+  if ($Marketplace) {
+    foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery')) {
+      $identity['Initial Catalog'] = "FindYourFood_${service}Test_$run"
+      [Environment]::SetEnvironmentVariable("ConnectionStrings__$service", $identity.get_ConnectionString())
+    }
+    $seedOptions += '--marketplace'
+  }
   Set-IdentityDevelopmentConfiguration
   $env:FINDYOURFOOD_E2E_ACCOUNTS = Join-Path $localState "admin-accounts-$run.json"
   $readyToClean = $true
   Invoke-Checked 'dotnet' (@('run', '--project', $seed, '--') + $seedOptions)
   if ($Experience) {
     & "$PSScriptRoot/Start-ExperienceEnvironment.ps1"
+  } elseif ($Marketplace) {
+    & "$PSScriptRoot/Start-MarketplaceEnvironment.ps1" -Services Discovery,Customer
   } elseif ($Provider) {
     & "$PSScriptRoot/Start-ProviderEnvironment.ps1"
   } else {
@@ -83,6 +101,10 @@ try {
     $env:ConnectionStrings__Provider = $original.Provider
     $env:FINDYOURFOOD_E2E_PROVIDER = $original.ProviderTests
     $env:FINDYOURFOOD_E2E_ACCOUNTS = $original.Accounts
+    $env:FINDYOURFOOD_E2E_MARKETPLACE = $marketplaceFlag
+    foreach ($key in $marketplaceOriginal.Keys) {
+      [Environment]::SetEnvironmentVariable($key, $marketplaceOriginal[$key])
+    }
     Pop-Location
   }
 }

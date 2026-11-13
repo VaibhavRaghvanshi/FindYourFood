@@ -19,6 +19,8 @@ public sealed class ProviderBranch
     public string TimeZone { get; private set; } = string.Empty;
     public string HoursJson { get; private set; } = string.Empty;
     public DateTimeOffset? ClosedUntil { get; private set; }
+    public double? Latitude { get; private set; }
+    public double? Longitude { get; private set; }
 
     public void Update(BranchDetails details, string hoursJson)
     {
@@ -28,5 +30,7 @@ public sealed class ProviderBranch
         TimeZone = details.TimeZone;
         HoursJson = hoursJson;
         ClosedUntil = details.ClosedUntil;
+        Latitude = details.Latitude;
+        Longitude = details.Longitude;
     }
 }

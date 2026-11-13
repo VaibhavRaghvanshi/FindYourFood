@@ -3,6 +3,10 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../services/FindYourFood.Catalog.Api/FindYourFood.Catalog.Infrastructure/FindYourFood.Catalog.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Customer.Api/FindYourFood.Customer.Infrastructure/FindYourFood.Customer.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Location.Api/FindYourFood.Location.Infrastructure/FindYourFood.Location.Infrastructure.csproj" />
+    <ProjectReference Include="../../services/FindYourFood.Discovery.Api/FindYourFood.Discovery.Infrastructure/FindYourFood.Discovery.Infrastructure.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../../services/FindYourFood.Identity.Api/FindYourFood.Identity.Infrastructure/FindYourFood.Identity.Infrastructure.csproj" />
     <ProjectReference Include="../../services/FindYourFood.Organization.Api/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />

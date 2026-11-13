@@ -6,6 +6,10 @@ using FindYourFood.Identity.Infrastructure;
 using FindYourFood.Identity.Infrastructure.Persistence;
 using FindYourFood.Organization.Infrastructure;
 using FindYourFood.Provider.Infrastructure.Data;
+using FindYourFood.Catalog.Infrastructure.Data;
+using FindYourFood.Customer.Infrastructure.Data;
+using FindYourFood.Location.Infrastructure.Data;
+using FindYourFood.Discovery.Infrastructure.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +25,7 @@ var providerConnection = args.Contains("--provider", StringComparer.Ordinal)
     ? IsolatedConnection("ConnectionStrings__Provider", "FindYourFood_ProviderTest_")
     : null;
 var output = Required("FINDYOURFOOD_E2E_ACCOUNTS");
+var marketplace = args.Contains("--marketplace", StringComparer.Ordinal);
 var services = new ServiceCollection();
 services.AddLogging();
 var clock = new EnrollmentClock(DateTimeOffset.UtcNow.AddSeconds(-30));
@@ -42,8 +47,13 @@ await using var experienceDatabase = experience is null ? null : new ExperienceD
     new DbContextOptionsBuilder<ExperienceDbContext>().UseSqlServer(experience).Options);
 await using var providerDatabase = providerConnection is null ? null : new ProviderDbContext(
     new DbContextOptionsBuilder<ProviderDbContext>().UseSqlServer(providerConnection).Options);
+await using var catalogDatabase = marketplace ? TestDatabase<CatalogDbContext>("Catalog", options => new(options)) : null;
+await using var customerDatabase = marketplace ? TestDatabase<CustomerDbContext>("Customer", options => new(options)) : null;
+await using var locationDatabase = marketplace ? TestDatabase<LocationDbContext>("Location", options => new(options)) : null;
+await using var discoveryDatabase = marketplace ? TestDatabase<DiscoveryDbContext>("Discovery", options => new(options)) : null;
+DbContext?[] marketplaceDatabases = [catalogDatabase, customerDatabase, locationDatabase, discoveryDatabase];
 
-if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider")))
+if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider" or "--marketplace")))
 {
     throw new ArgumentException("Use --experience or --provider to include a service, and --cleanup to remove isolated databases.");
 }
@@ -61,10 +71,18 @@ if (args.Contains("--cleanup", StringComparer.Ordinal))
         await providerDatabase.Database.EnsureDeletedAsync();
     }
     File.Delete(output);
+    foreach (var database in marketplaceDatabases)
+    {
+        if (database is not null) await database.Database.EnsureDeletedAsync();
+    }
     return;
 }
 
 await identityDatabase.Database.MigrateAsync();
+foreach (var database in marketplaceDatabases)
+{
+    if (database is not null) await database.Database.MigrateAsync();
+}
 await organizationDatabase.Database.MigrateAsync();
 if (experienceDatabase is not null)
 {
@@ -94,6 +112,11 @@ async Task<object> EnrollAsync(string name, bool isOwner)
 
 static string Required(string name) => Environment.GetEnvironmentVariable(name)
     ?? throw new InvalidOperationException($"Set {name}.");
+
+static TDatabase TestDatabase<TDatabase>(string service, Func<DbContextOptions<TDatabase>, TDatabase> create)
+    where TDatabase : DbContext =>
+    create(new DbContextOptionsBuilder<TDatabase>().UseSqlServer(
+        IsolatedConnection($"ConnectionStrings__{service}", $"FindYourFood_{service}Test_")).Options);
 
 static string IsolatedConnection(string name, string prefix)
 {

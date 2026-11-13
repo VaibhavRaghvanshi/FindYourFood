@@ -1,0 +1,43 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "discovery-search": {
+        "ClusterId": "discovery",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 4096,
+        "Match": {
+          "Path": "/api/v1/discovery/search",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "discovery": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5108/"
+          }
+        }
+      }
+    }
+  }
+}

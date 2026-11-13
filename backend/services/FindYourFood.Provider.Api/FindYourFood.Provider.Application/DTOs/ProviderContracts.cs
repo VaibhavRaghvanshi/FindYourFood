@@ -9,6 +9,7 @@ public sealed record ReviewRequest(int ExpectedRevision, bool Approved, string? 
 
 public sealed record DocumentView(string Kind, string MediaType, int Size, DateTimeOffset UploadedAt);
 public sealed record BranchView(Guid Id, BranchDetails Details);
+public sealed record PublicBranchView(Guid Id, string ProviderName, string Kind, BranchDetails Details);
 public sealed record ProviderSummary(Guid Id, string Name, string Kind, DateTimeOffset UpdatedAt);
 public sealed record ProviderView(Guid Id, int Revision, string Status, ProviderDetails Details, string? ReviewNote,
     IReadOnlyList<DocumentView> Documents, IReadOnlyList<BranchView> Branches, IReadOnlyList<ProviderReview> Reviews);

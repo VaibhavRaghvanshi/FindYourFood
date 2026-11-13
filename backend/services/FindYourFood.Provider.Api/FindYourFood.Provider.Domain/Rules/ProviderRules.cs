@@ -31,7 +31,9 @@ public static class ProviderRules
         if (branch is null || !Text(branch.Name, 100) || !Text(branch.Address, 240) ||
             !Text(branch.City, 80) || !Text(branch.TimeZone, 80) ||
             !TimeZoneInfo.TryFindSystemTimeZoneById(branch.TimeZone, out _) ||
-            branch.Hours is not { Count: > 0 and <= 7 } || branch.ClosedUntil > now.AddDays(90))
+            branch.Hours is not { Count: > 0 and <= 7 } || branch.ClosedUntil > now.AddDays(90) ||
+            !((branch.Latitude is null && branch.Longitude is null) ||
+                (branch.Latitude is >= -90 and <= 90 && branch.Longitude is >= -180 and <= 180)))
         {
             return false;
         }

@@ -120,8 +120,15 @@
                 <label for="branch-city">City</label>
                 <input id="branch-city" name="city" required maxlength="80" [ngModel]="branch().city"
                   (ngModelChange)="editBranchField('city', $event)" />
-                <label for="branch-zone">Time zone</label>
-                <input id="branch-zone" name="zone" required maxlength="80" placeholder="Asia/Kolkata"
+                <label for="branch-latitude">Pickup latitude (optional)</label>
+                <input id="branch-latitude" name="latitude" type="number" min="-90" max="90" step="any"
+                  [ngModel]="branch().latitude" (ngModelChange)="editCoordinate('latitude', $event)" />
+                <label for="branch-longitude">Pickup longitude (optional)</label>
+                <input id="branch-longitude" name="longitude" type="number" min="-180" max="180" step="any"
+                  [ngModel]="branch().longitude" (ngModelChange)="editCoordinate('longitude', $event)" />
+                <small>Set both coordinates to enable nearby discovery and delivery quotes.</small>
+                <label for="branch-zone-name">Time zone</label>
+                <input id="branch-zone-name" name="zone" required maxlength="80" placeholder="Asia/Kolkata"
                   [ngModel]="branch().timeZone" (ngModelChange)="editBranchField('timeZone', $event)" />
                 <label for="branch-closure">Temporarily closed until (device time)</label>
                 <input id="branch-closure" name="closure" type="datetime-local" [ngModel]="closure()" (ngModelChange)="closure.set($event)" />

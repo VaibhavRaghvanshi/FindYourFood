@@ -58,3 +58,10 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Applied the Location migration to `FindYourFood_LocationDb`. Zone administration requires the MFA owner account and uses revision checks.
 - Added delivery coverage checking and an origin/destination quote requiring both points in one enabled delivery zone. The routing port currently uses an explicitly identified straight-line estimator.
 - Built all three Angular apps. Passed Location unit and SQL integration tests for geographic boundaries, owner-only changes, stale updates, active coverage and cross-zone rejection. Road and traffic provider integration remains.
+
+## Discovery
+
+- Applied `FindYourFood_DiscoveryDb` and the Provider branch-coordinate migration. Both EF models had no pending changes.
+- Added approved public branch contracts, atomic city projection refresh, food and tag filtering, opening-hour checks and Location coverage ranking. The customer app provides city and location fallback search at `/restaurants`.
+- Passed nine tests across Provider, Location and Discovery, including SQL-backed projection refresh failures, cross-zone checks and case-insensitive city lookup. All three Angular apps built.
+- Passed the combined Edge browser flow through YARP using isolated databases. It covered provider documents and approval, branch coordinates, menu publication, owner delivery areas, customer address persistence, restaurant search and favorite saving. The temporary databases were removed after the run.

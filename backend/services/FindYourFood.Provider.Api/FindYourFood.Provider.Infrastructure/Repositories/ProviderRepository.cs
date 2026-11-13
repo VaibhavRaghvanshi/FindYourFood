@@ -3,11 +3,29 @@ using FindYourFood.Provider.Application.Interfaces;
 using FindYourFood.Provider.Domain;
 using FindYourFood.Provider.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace FindYourFood.Provider.Infrastructure.Repositories;
 
 internal sealed class ProviderRepository(ProviderDbContext database) : IProviderRepository
 {
+    public async Task<IReadOnlyList<PublicBranchView>> PublicAsync(string? city, Guid? id, int page, CancellationToken ct)
+    {
+        var query = from branch in database.Branches.AsNoTracking()
+                    join provider in database.Providers.AsNoTracking() on branch.ProviderId equals provider.Id
+                    where provider.Status == ProviderStatus.Approved
+                    select new { Branch = branch, ProviderName = provider.Name, provider.Kind };
+        if (city is not null) query = query.Where(row =>
+            EF.Functions.Collate(row.Branch.City, "Latin1_General_100_CI_AS") == city);
+        if (id is not null) query = query.Where(row => row.Branch.Id == id);
+        var rows = await query.OrderBy(row => row.Branch.Id).Skip((page - 1) * 50).Take(50).ToListAsync(ct);
+        return rows.Select(row => new PublicBranchView(row.Branch.Id, row.ProviderName, row.Kind,
+            new BranchDetails(row.Branch.Name, row.Branch.Address, row.Branch.City, row.Branch.TimeZone,
+                JsonSerializer.Deserialize<OpeningWindow[]>(row.Branch.HoursJson,
+                    new JsonSerializerOptions(JsonSerializerDefaults.Web))!, row.Branch.ClosedUntil,
+                row.Branch.Latitude, row.Branch.Longitude))).ToArray();
+    }
+
     public Task<ProviderProfile?> FindOwnedAsync(Guid owner, CancellationToken ct) =>
         database.Providers.SingleOrDefaultAsync(profile => profile.OwnerId == owner, ct);
 

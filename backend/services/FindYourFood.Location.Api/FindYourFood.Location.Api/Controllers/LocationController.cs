@@ -45,4 +45,13 @@ public sealed class LocationController(DeliveryZones zones) : ControllerBase
             _ => Problem(statusCode: 409, title: "The zone changed. Reload before saving again.")
         };
     }
+
+    [AllowAnonymous]
+    [HttpPost("coverage-matrix")]
+    [RequestSizeLimit(131_072)]
+    public async Task<ActionResult<Serviceability[]>> Matrix(CoverageMatrixRequest input, CancellationToken ct) =>
+        input.Destination?.IsValid == true && input.Origins is { Count: > 0 and <= 1000 } &&
+            input.Origins.All(point => point?.IsValid == true)
+            ? Ok(await zones.MatrixAsync(input, ct))
+            : Problem(statusCode: 400, title: "Enter a destination and up to 1000 valid origins.");
 }

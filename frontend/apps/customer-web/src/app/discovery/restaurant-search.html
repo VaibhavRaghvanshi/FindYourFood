@@ -1,0 +1,55 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="68" height="68" alt="FindYourFood home"></a><a routerLink="/account">Your account</a></header>
+  <p class="eyebrow">Find your next favorite</p>
+  <h1>What sounds good?</h1>
+  <p>Explore menus from approved food providers near you.</p>
+  <form #form="ngForm" (ngSubmit)="search()">
+    <fieldset [disabled]="busy()">
+      <legend>Search restaurants and food</legend>
+      <div class="filters">
+        <label>City <input name="city" required maxlength="80" autocomplete="address-level2" placeholder="Your city" [(ngModel)]="city"></label>
+        <label>Food or restaurant <input name="query" maxlength="100" placeholder="Soup, dosa, a favorite kitchen…" [(ngModel)]="query"></label>
+        <label>Cuisine or dietary tag <input name="tag" maxlength="40" placeholder="Vegetarian, South Indian…" [(ngModel)]="tag"></label>
+      </div>
+      <label class="inline"><input name="open" type="checkbox" [(ngModel)]="openNow"> Open now</label>
+      <details>
+        <summary>Set your location for delivery availability</summary>
+        <p>Location is used to check delivery areas and sort nearby results.</p>
+        <div class="filters">
+          <label>Latitude <input name="latitude" type="number" min="-90" max="90" step="any" [(ngModel)]="latitude"></label>
+          <label>Longitude <input name="longitude" type="number" min="-180" max="180" step="any" [(ngModel)]="longitude"></label>
+        </div>
+        <button type="button" (click)="useLocation()">Use my location</button>
+        <button type="button" (click)="clearLocation()">Clear location</button>
+      </details>
+      <button class="primary" type="submit" [disabled]="form.invalid || (latitude === null) !== (longitude === null)">Find food</button>
+    </fieldset>
+  </form>
+  @if (busy()) { <p role="status">Finding your next meal…</p> }
+  @if (message()) { <p role="alert">{{ message() }}</p> }
+  @if (results(); as found) {
+    <p aria-live="polite">{{ found.total }} {{ found.total === 1 ? 'restaurant' : 'restaurants' }} found</p>
+    <div class="results">
+      @for (hit of found.items; track hit.branchId) {
+        <article>
+          <p class="status">{{ hit.openNow ? 'Open now' : 'Closed now' }}</p>
+          <h2><a [routerLink]="['/menu', hit.branchId]">{{ hit.providerName }}</a></h2>
+          <p>{{ hit.branchName }} · {{ hit.city }}</p>
+          <p>{{ hit.address }}</p>
+          <p>{{ hit.foods.slice(0, 4).join(' · ') }}</p>
+          <p class="tags">{{ hit.tags.join(' · ') }}</p>
+          @if (hit.serviceable === true) {
+            <p>Delivery available · {{ (hit.deliveryFeeMinor ?? 0) / 100 | currency:'INR' }}</p>
+          } @else if (hit.serviceable === false) { <p>Outside your delivery area</p> }
+          @if (hit.distanceKm !== null) { <p>{{ hit.distanceKm | number:'1.0-1' }} km in a straight line</p> }
+          <a class="menu-link" [routerLink]="['/menu', hit.branchId]">View menu</a>
+        </article>
+      } @empty { <p>No matching published menus. Try another city or search.</p> }
+    </div>
+    <nav aria-label="Search result pages">
+      <button type="button" [disabled]="busy() || found.page === 1" (click)="search(found.page - 1)">Previous</button>
+      <span>Page {{ found.page }}</span>
+      <button type="button" [disabled]="busy() || found.page * 20 >= found.total" (click)="search(found.page + 1)">Next</button>
+    </nav>
+  }
+</main>

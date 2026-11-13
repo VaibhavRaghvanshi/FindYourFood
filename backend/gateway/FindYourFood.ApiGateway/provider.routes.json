@@ -1,6 +1,11 @@
 {
   "ReverseProxy": {
     "Routes": {
+      "provider-public-branches": {
+        "ClusterId": "provider",
+        "AuthorizationPolicy": "Anonymous",
+        "Match": { "Path": "/api/v1/providers/public/branches/{**remaining}", "Methods": ["GET"] }
+      },
       "provider-applications": {
         "ClusterId": "provider",
         "AuthorizationPolicy": "Default",

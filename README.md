@@ -93,6 +93,8 @@ Open [the provider portal](http://localhost:4202) to create an account or sign i
 
 Run `.\scripts\Test-AdministrationBrowser.ps1 -Provider` with the same SQL and browser settings to test the complete flow with isolated databases.
 
+Run `.\scripts\Test-AdministrationBrowser.ps1 -Marketplace` to include Catalog, Customer, Location and Discovery in the isolated browser flow.
+
 ## Publish a branch menu
 
 With Identity, Organization, and Provider initialized, stop the current profile and run:
@@ -111,5 +113,9 @@ Initialize Customer using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service
 ## Configure delivery coverage
 
 Initialize Location using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Location` and start `./scripts/Start-MarketplaceEnvironment.ps1 -Services Location`. Sign in as the MFA owner on the staff portal and select **Delivery areas** to create and activate a zone. Customer coverage checking is at `/delivery-area`. See the [Location API contract](docs/api-contracts/LOCATION.md) for the straight-line estimate and zone rules.
+
+## Find restaurants
+
+Apply the latest Provider migration with `./scripts/Initialize-ProviderDatabase.ps1`, initialize Discovery with `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Discovery`, then run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Discovery`. Catalog and Location must also be initialized. The customer search page is `/restaurants`. Providers enter pickup coordinates in their branch settings to enable nearby ranking and delivery checks. See the [Discovery API contract](docs/api-contracts/DISCOVERY.md).
 
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

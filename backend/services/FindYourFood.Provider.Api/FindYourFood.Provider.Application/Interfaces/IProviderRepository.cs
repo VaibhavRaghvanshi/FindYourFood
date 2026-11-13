@@ -5,6 +5,7 @@ namespace FindYourFood.Provider.Application.Interfaces;
 
 public interface IProviderRepository
 {
+    Task<IReadOnlyList<PublicBranchView>> PublicAsync(string? city, Guid? branch, int page, CancellationToken cancellationToken);
     Task<ProviderProfile?> FindOwnedAsync(Guid owner, CancellationToken cancellationToken);
     Task<ProviderProfile?> FindAsync(Guid id, CancellationToken cancellationToken);
     Task<IReadOnlyList<ProviderSummary>> PendingAsync(CancellationToken cancellationToken);

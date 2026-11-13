@@ -9,7 +9,7 @@ import {
 
 const emptyApplication: ProviderDetails = { name: '', kind: 'restaurant', contactEmail: '', description: '' };
 const defaultBranch: BranchDetails = {
-  name: '', address: '', city: '', timeZone: 'Asia/Kolkata', closedUntil: null,
+  name: '', address: '', city: '', timeZone: 'Asia/Kolkata', closedUntil: null, latitude: null, longitude: null,
   hours: [1, 2, 3, 4, 5].map((day) => ({ day, opens: '09:00', closes: '17:00' })),
 };
 
@@ -123,6 +123,10 @@ export class ProviderPage {
   }
 
   editBranchField(key: 'name' | 'address' | 'city' | 'timeZone', value: string) {
+    this.branch.update((branch) => ({ ...branch, [key]: value }));
+  }
+
+  editCoordinate(key: 'latitude' | 'longitude', value: number | null) {
     this.branch.update((branch) => ({ ...branch, [key]: value }));
   }
 

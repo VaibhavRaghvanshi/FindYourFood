@@ -22,6 +22,22 @@ public sealed class DeliveryZones(IZoneRepository zones, IUnitOfWork unitOfWork,
     public async Task<Serviceability> QuoteAsync(DeliveryQuoteRequest input, CancellationToken ct)
     {
         var candidates = await zones.CandidatesAsync(input.Destination.Latitude, ct);
+        return await QuoteAsync(input, candidates, ct);
+    }
+
+    public async Task<Serviceability[]> MatrixAsync(CoverageMatrixRequest input, CancellationToken ct)
+    {
+        var candidates = await zones.CandidatesAsync(input.Destination.Latitude, ct);
+        var results = new List<Serviceability>(input.Origins.Count);
+        foreach (var origin in input.Origins)
+        {
+            results.Add(await QuoteAsync(new(origin, input.Destination), candidates, ct));
+        }
+        return results.ToArray();
+    }
+
+    private async Task<Serviceability> QuoteAsync(DeliveryQuoteRequest input, IReadOnlyList<DeliveryZone> candidates, CancellationToken ct)
+    {
         var match = candidates.Where(zone =>
                 input.Origin.DistanceTo(new(zone.Latitude, zone.Longitude)) <= zone.RadiusKm &&
                 input.Destination.DistanceTo(new(zone.Latitude, zone.Longitude)) <= zone.RadiusKm)

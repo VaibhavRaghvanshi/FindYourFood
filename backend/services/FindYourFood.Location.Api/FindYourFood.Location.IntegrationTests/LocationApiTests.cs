@@ -43,6 +43,10 @@ public sealed class LocationApiTests(LocationFixture fixture) : IClassFixture<Lo
         var outside = (await (await customer.PostAsJsonAsync(quoteRoute, new DeliveryQuoteRequest(farAway, point)))
             .Content.ReadFromJsonAsync<Serviceability>())!;
         Assert.False(outside.Serviceable);
+        var matrix = (await (await customer.PostAsJsonAsync("/api/v1/location/coverage-matrix",
+            new CoverageMatrixRequest(point, [point, farAway]))).Content.ReadFromJsonAsync<Serviceability[]>())!;
+        Assert.True(matrix[0].Serviceable);
+        Assert.False(matrix[1].Serviceable);
 
         Assert.Equal(HttpStatusCode.OK, (await owner.PutAsJsonAsync(route,
             new ZoneUpdate(1, settings with { Enabled = false }))).StatusCode);

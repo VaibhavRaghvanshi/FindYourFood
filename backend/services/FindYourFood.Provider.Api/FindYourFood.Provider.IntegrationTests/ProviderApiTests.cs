@@ -76,10 +76,23 @@ public sealed class ProviderApiTests(ProviderSqlFixture fixture) : IClassFixture
             new UpdateProviderRequest(profile.Revision, Details with { Description = "Updated description." })), HttpStatusCode.OK);
         Assert.Equal("Updated description.", profile.Details.Description);
 
-        var branch = new BranchDetails("Central", "42 Main Road", "Pune", "Asia/Kolkata", [new(1, "09:00", "17:00")], null);
+        var branch = new BranchDetails("Central", "42 Main Road", "Pune", "Asia/Kolkata",
+            [new(1, "09:00", "17:00")], null, 18.52, 73.85);
         profile = await Read(await applicant.PostAsJsonAsync(Me + "/branches",
             new UpdateBranchRequest(profile.Revision, branch)), HttpStatusCode.Created);
         var branchId = Assert.Single(profile.Branches).Id;
+        using var publicClient = fixture.Client();
+        var published = (await publicClient.GetFromJsonAsync<PublicBranchView>(
+            "/api/v1/providers/public/branches/" + branchId))!;
+        Assert.Equal(branchId, published.Id);
+        Assert.Equal(18.52, published.Details.Latitude);
+        var directory = (await publicClient.GetFromJsonAsync<PublicBranchView[]>(
+            "/api/v1/providers/public/branches?city=pune&page=1"))!;
+        Assert.Contains(directory, item => item.Id == branchId);
+        Assert.Equal(HttpStatusCode.NoContent,
+            (await applicant.GetAsync(Me + "/branches/" + branchId + "/access")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound,
+            (await other.GetAsync(Me + "/branches/" + branchId + "/access")).StatusCode);
         var closure = DateTimeOffset.UtcNow.AddDays(1);
         profile = await Read(await applicant.PutAsJsonAsync(Me + "/branches/" + branchId,
             new UpdateBranchRequest(profile.Revision, branch with { ClosedUntil = closure })), HttpStatusCode.OK);

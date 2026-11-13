@@ -23,6 +23,8 @@ export interface BranchDetails {
   timeZone: string;
   hours: OpeningWindow[];
   closedUntil: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 export interface ProviderSummary { id: string; name: string; kind: string; updatedAt: string }
 export interface ProviderView {

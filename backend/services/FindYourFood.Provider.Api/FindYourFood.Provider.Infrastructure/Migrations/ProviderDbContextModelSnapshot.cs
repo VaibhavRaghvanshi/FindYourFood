@@ -46,6 +46,12 @@ namespace FindYourFood.Provider.Infrastructure.Migrations
                         .HasMaxLength(600)
                         .HasColumnType("nvarchar(600)");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

@@ -185,7 +185,8 @@ public sealed class ProviderOnboarding(IProviderRepository repository, IUnitOfWo
             new ProviderDetails(profile.Name, profile.Kind, profile.ContactEmail, profile.Description),
             profile.ReviewNote, documents, branches.Select(branch => new BranchView(branch.Id,
                 new BranchDetails(branch.Name, branch.Address, branch.City, branch.TimeZone,
-                    JsonSerializer.Deserialize<OpeningWindow[]>(branch.HoursJson, Json)!, branch.ClosedUntil))).ToArray(), reviews);
+                    JsonSerializer.Deserialize<OpeningWindow[]>(branch.HoursJson, Json)!, branch.ClosedUntil,
+                    branch.Latitude, branch.Longitude))).ToArray(), reviews);
     }
 
     private static Task<ProviderResult> Invalid() => Task.FromResult(new ProviderResult(ProviderResultStatus.Invalid));
