@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'delivery-area',
+    title: 'Delivery coverage | FindYourFood',
+    loadComponent: () => import('./location/delivery-check').then((module) => module.DeliveryCheck),
+  },
+  {
     path: 'account',
     title: 'Account settings | FindYourFood',
     loadComponent: () => import('./account/customer-account').then((module) => module.CustomerAccount),

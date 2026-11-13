@@ -108,4 +108,8 @@ Sign in to the provider portal as the approved branch owner. Open **Branches and
 
 Initialize Customer using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Customer`. Run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Customer`, sign in to the customer app, and select **Manage your account settings**. For both profiles and menus, start the profile with `-Services Catalog,Customer`. See the [Customer API contract](docs/api-contracts/CUSTOMER.md).
 
+## Configure delivery coverage
+
+Initialize Location using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Location` and start `./scripts/Start-MarketplaceEnvironment.ps1 -Services Location`. Sign in as the MFA owner on the staff portal and select **Delivery areas** to create and activate a zone. Customer coverage checking is at `/delivery-area`. See the [Location API contract](docs/api-contracts/LOCATION.md) for the straight-line estimate and zone rules.
+
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

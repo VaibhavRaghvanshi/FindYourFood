@@ -1,0 +1,80 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "location-quote": {
+        "ClusterId": "location",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 4096,
+        "Match": { "Path": "/api/v1/location/route-quote", "Methods": ["POST"] }
+      },
+      "location-check": {
+        "ClusterId": "location",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 2048,
+        "Match": {
+          "Path": "/api/v1/location/serviceability",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "location-zones": {
+        "ClusterId": "location",
+        "AuthorizationPolicy": "staff",
+        "Match": {
+          "Path": "/api/v1/location/zones",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "location-zone": {
+        "ClusterId": "location",
+        "AuthorizationPolicy": "staff",
+        "MaxRequestBodySize": 8192,
+        "Match": {
+          "Path": "/api/v1/location/zones/{id:guid}",
+          "Methods": [
+            "PUT"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "location": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5107/"
+          }
+        }
+      }
+    }
+  }
+}

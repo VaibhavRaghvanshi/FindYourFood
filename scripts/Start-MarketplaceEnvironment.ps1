@@ -1,13 +1,15 @@
 #requires -Version 7.0
 [CmdletBinding()]
-param([Parameter(Mandatory)][ValidateSet('Catalog', 'Customer')][string[]]$Services)
+param([Parameter(Mandatory)][ValidateSet('Catalog', 'Customer', 'Location')][string[]]$Services)
 . "$PSScriptRoot/Development.ps1"
 
-$ports = @{ Catalog = 5105; Customer = 5106 }
+$ports = @{ Catalog = 5105; Customer = 5106; Location = 5107 }
 $servicesToStart = @($Services | Select-Object -Unique)
 $needsProvider = $servicesToStart -contains 'Catalog'
+$needsAdministration = $servicesToStart -contains 'Location'
 $names = @('frontend', 'identity', 'gateway')
 if ($needsProvider) { $names += @('provider', 'organization', 'provider-frontend', 'admin-frontend') }
+elseif ($needsAdministration) { $names += @('organization', 'admin-frontend') }
 $names += @($servicesToStart | ForEach-Object { $_.ToLowerInvariant() })
 foreach ($name in $names) {
   if (Get-DevelopmentProcess $name) { throw "$name is already running. Stop the current profile first." }
@@ -60,6 +62,8 @@ try {
   }
   if ($needsProvider) {
     & "$PSScriptRoot/Start-ProviderEnvironment.ps1" -SkipBuild
+  } elseif ($needsAdministration) {
+    & "$PSScriptRoot/Start-AdministrationEnvironment.ps1" -SkipBuild
   } else {
     & "$PSScriptRoot/Start-IdentityEnvironment.ps1" -SkipBuild
   }

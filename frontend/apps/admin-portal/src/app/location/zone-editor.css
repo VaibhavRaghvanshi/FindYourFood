@@ -1,0 +1,7 @@
+section { background: #fffdf7; padding: 20px; border: 1px solid #ced7c7; border-radius: 15px; }
+nav, .areas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+label { display: grid; gap: 5px; margin-block: 10px; }
+input:not([type=checkbox]) { padding: 9px; max-width: 360px; font: inherit; border: 1px solid #65745e; border-radius: 7px; }
+button { padding: 9px 14px; font: inherit; color: #293d25; background: #fffdf7; border: 1px solid #65745e; border-radius: 7px; }
+fieldset { border: 1px solid #ced7c7; border-radius: 9px; }
+button:disabled { opacity: .55; }

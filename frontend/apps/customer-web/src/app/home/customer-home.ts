@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { firstValueFrom, timeout } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { bundledExperience, isPublishedExperience } from '../../../../../shared/experience/experience-document';
 import { ExperienceView } from '../../../../../shared/experience/experience-view';
 
@@ -8,8 +9,8 @@ const storageKey = 'findyourfood.customer-home.v1';
 
 @Component({
   selector: 'app-customer-home',
-  imports: [ExperienceView],
-  template: '<main><fyf-experience-view [configuration]="configuration()" /></main>',
+  imports: [ExperienceView, RouterLink],
+  template: '<nav aria-label="Customer tools"><a routerLink="/delivery-area">Check delivery area</a> · <a routerLink="/account">Account settings</a></nav><main><fyf-experience-view [configuration]="configuration()" /></main>',
   styles: 'main { min-height: 100dvh; display: grid; }',
 })
 export class CustomerHome implements OnInit {

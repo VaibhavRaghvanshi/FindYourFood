@@ -52,3 +52,9 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Applied the initial migration to `FindYourFood_CustomerDb`. EF Core reported no pending model changes.
 - Customers can save profile settings, multiple delivery addresses, dietary preferences and favorite menus. Personalization defaults to off. The browser retains the access token in memory for the development session.
 - Passed the Customer unit and SQL Server integration tests, including concurrent updates and cross-account access. All three Angular apps built and 12 frontend tests passed.
+
+## November 13, 2026 — Location
+
+- Applied the Location migration to `FindYourFood_LocationDb`. Zone administration requires the MFA owner account and uses revision checks.
+- Added delivery coverage checking and an origin/destination quote requiring both points in one enabled delivery zone. The routing port currently uses an explicitly identified straight-line estimator.
+- Built all three Angular apps. Passed Location unit and SQL integration tests for geographic boundaries, owner-only changes, stale updates, active coverage and cross-zone rejection. Road and traffic provider integration remains.

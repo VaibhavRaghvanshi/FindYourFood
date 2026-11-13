@@ -1,0 +1,28 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="64" height="64" alt="FindYourFood home"></a></header>
+  <h1>Do we deliver to you?</h1>
+  <p>Use your current location or enter coordinates to check delivery coverage.</p>
+  <button type="button" [disabled]="busy()" (click)="useCurrentLocation()">Use my location</button>
+  <form #form="ngForm" (ngSubmit)="check()">
+    <fieldset [disabled]="busy()">
+      <legend>Delivery location</legend>
+      <label>Latitude <input name="latitude" type="number" required min="-90" max="90" step="any" [(ngModel)]="latitude"></label>
+      <label>Longitude <input name="longitude" type="number" required min="-180" max="180" step="any" [(ngModel)]="longitude"></label>
+      <button type="submit" [disabled]="form.invalid">Check coverage</button>
+    </fieldset>
+  </form>
+  @if (busy()) { <p role="status">Checking your area…</p> }
+  @if (message()) { <p role="status">{{ message() }}</p> }
+  @if (result(); as coverage) {
+    <section aria-live="polite">
+      @if (coverage.serviceable) {
+        <h2>You're in our delivery area</h2>
+        <p>{{ coverage.zone }} · {{ coverage.city }}</p>
+        <p>Area delivery fee {{ (coverage.deliveryFeeMinor ?? 0) / 100 | currency:'INR' }}</p>
+      } @else {
+        <h2>We haven't reached your area yet</h2>
+        <p>Try another delivery location.</p>
+      }
+    </section>
+  }
+</main>

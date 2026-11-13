@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../FindYourFood.Location.Domain/FindYourFood.Location.Domain.csproj" />
+  </ItemGroup>
+</Project>
