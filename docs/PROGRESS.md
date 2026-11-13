@@ -65,3 +65,10 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Added approved public branch contracts, atomic city projection refresh, food and tag filtering, opening-hour checks and Location coverage ranking. The customer app provides city and location fallback search at `/restaurants`.
 - Passed nine tests across Provider, Location and Discovery, including SQL-backed projection refresh failures, cross-zone checks and case-insensitive city lookup. All three Angular apps built.
 - Passed the combined Edge browser flow through YARP using isolated databases. It covered provider documents and approval, branch coordinates, menu publication, owner delivery areas, customer address persistence, restaurant search and favorite saving. The temporary databases were removed after the run.
+
+## Cart and pricing
+
+- Applied `FindYourFood_CartDb`. EF Core reported no pending model changes.
+- Added customer carts and guest carts with a hashed 256-bit capability, revision checks, 24-hour expiry, current published prices, variant/add-on validation and fresh delivery quotes.
+- Passed the Cart pricing unit test and SQL integration test, including cross-account access, concurrent updates, price changes, delivery rejection, restoration, discard and expiry. All three Angular apps built.
+- Passed the expanded Edge browser flow for authenticated and guest carts, delivery totals and guest refresh persistence. Checked the mobile screenshot with the supplied logo and confirmed no horizontal overflow at 390 pixels. Temporary databases were removed.

@@ -1,0 +1,92 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "cart-create": {
+        "ClusterId": "cart",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 2048,
+        "Match": {
+          "Path": "/api/v1/carts",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "cart-mine": {
+        "ClusterId": "cart",
+        "AuthorizationPolicy": "Default",
+        "Match": {
+          "Path": "/api/v1/carts/mine",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "cart-cart": {
+        "ClusterId": "cart",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 32768,
+        "Match": {
+          "Path": "/api/v1/carts/{id:guid}",
+          "Methods": [
+            "GET",
+            "PUT",
+            "DELETE"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "cart-quote": {
+        "ClusterId": "cart",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 4096,
+        "Match": {
+          "Path": "/api/v1/carts/{id:guid}/quote",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "cart": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5109/"
+          }
+        }
+      }
+    }
+  }
+}

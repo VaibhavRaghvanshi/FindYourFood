@@ -118,4 +118,8 @@ Initialize Location using `./scripts/Initialize-MarketplaceDatabase.ps1 -Service
 
 Apply the latest Provider migration with `./scripts/Initialize-ProviderDatabase.ps1`, initialize Discovery with `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Discovery`, then run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Discovery`. Catalog and Location must also be initialized. The customer search page is `/restaurants`. Providers enter pickup coordinates in their branch settings to enable nearby ranking and delivery checks. See the [Discovery API contract](docs/api-contracts/DISCOVERY.md).
 
+## Use a shopping cart
+
+Initialize Cart with `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Cart` and run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Discovery,Customer,Cart` after initializing those services. Add menu items with their variants and add-ons, then open `/cart` to edit quantities and get a delivery quote. Guest carts work without registration. See the [Cart API contract](docs/api-contracts/CART.md).
+
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

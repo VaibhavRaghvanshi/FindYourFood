@@ -10,6 +10,7 @@ using FindYourFood.Catalog.Infrastructure.Data;
 using FindYourFood.Customer.Infrastructure.Data;
 using FindYourFood.Location.Infrastructure.Data;
 using FindYourFood.Discovery.Infrastructure.Data;
+using FindYourFood.Cart.Infrastructure.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +52,8 @@ await using var catalogDatabase = marketplace ? TestDatabase<CatalogDbContext>("
 await using var customerDatabase = marketplace ? TestDatabase<CustomerDbContext>("Customer", options => new(options)) : null;
 await using var locationDatabase = marketplace ? TestDatabase<LocationDbContext>("Location", options => new(options)) : null;
 await using var discoveryDatabase = marketplace ? TestDatabase<DiscoveryDbContext>("Discovery", options => new(options)) : null;
-DbContext?[] marketplaceDatabases = [catalogDatabase, customerDatabase, locationDatabase, discoveryDatabase];
+await using var cartDatabase = marketplace ? TestDatabase<CartDbContext>("Cart", options => new(options)) : null;
+DbContext?[] marketplaceDatabases = [catalogDatabase, customerDatabase, locationDatabase, discoveryDatabase, cartDatabase];
 
 if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider" or "--marketplace")))
 {

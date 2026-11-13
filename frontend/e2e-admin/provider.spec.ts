@@ -48,10 +48,18 @@ test('a provider submits documents, staff approve it, and the provider manages a
   await applicant.getByLabel('Pickup latitude (optional)').fill('18.52');
   await applicant.getByLabel('Pickup longitude (optional)').fill('73.85');
   await applicant.getByLabel('Monday closes').fill('18:30');
+  if (process.env['FINDYOURFOOD_E2E_MARKETPLACE'] === 'true') {
+    for (const day of ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']) {
+      await applicant.getByLabel(day, { exact: true }).check();
+      await applicant.getByLabel(day + ' opens').fill('00:00');
+      await applicant.getByLabel(day + ' closes').fill('23:59');
+    }
+  }
   await applicant.getByRole('button', { name: 'Save branch' }).click();
   await expect(applicant.getByText('Branch saved.')).toBeVisible();
   await applicant.getByRole('button', { name: 'Edit Central kitchen' }).click();
-  await expect(applicant.getByLabel('Monday closes')).toHaveValue('18:30');
+  await expect(applicant.getByLabel('Monday closes')).toHaveValue(
+    process.env['FINDYOURFOOD_E2E_MARKETPLACE'] === 'true' ? '23:59' : '18:30');
 
   if (process.env['FINDYOURFOOD_E2E_MARKETPLACE'] === 'true') {
     await reviewer.getByRole('button', { name: 'Delivery areas', exact: true }).click();
@@ -114,5 +122,25 @@ test('a provider submits documents, staff approve it, and the provider manages a
     await expect(customer.getByRole('heading', { name: 'Tomato soup', exact: true })).toBeVisible();
     await customer.getByRole('button', { name: 'Save favorite' }).click();
     await expect(customer.getByText('Saved to your favorites.')).toBeVisible();
+    const menuUrl = customer.url();
+    await customer.getByRole('button', { name: 'Add to cart', exact: true }).click();
+    await expect(customer.getByText('Added to your cart.')).toBeVisible();
+    await customer.getByRole('link', { name: 'Your cart', exact: true }).click();
+    await expect(customer.getByRole('heading', { name: 'Tomato soup', exact: true })).toBeVisible();
+    await customer.getByLabel('Delivery latitude').fill('18.52');
+    await customer.getByLabel('Delivery longitude').fill('73.85');
+    await customer.getByRole('button', { name: 'Get delivery quote', exact: true }).click();
+    await expect(customer.locator('.quote')).toContainText('₹159.00');
+
+    const guest = await context.newPage();
+    await guest.goto(menuUrl);
+    await guest.getByRole('button', { name: 'Add to cart', exact: true }).click();
+    await expect(guest.getByText('Added to your cart.')).toBeVisible();
+    await guest.getByRole('link', { name: 'Your cart', exact: true }).click();
+    await guest.reload();
+    await expect(guest.getByRole('heading', { name: 'Tomato soup', exact: true })).toBeVisible();
+    await guest.setViewportSize({ width: 390, height: 844 });
+    expect(await guest.evaluate(() => globalThis.document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await guest.screenshot({ path: 'test-results/marketplace-cart-mobile.png', fullPage: true });
   }
 });

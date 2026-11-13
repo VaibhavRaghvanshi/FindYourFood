@@ -1,7 +1,9 @@
 <main>
-  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="84" height="84" alt="FindYourFood" /></a></header>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="84" height="84" alt="FindYourFood" /></a><a routerLink="/cart">Your cart</a></header>
   @if (publication(); as current) {
     <h1>{{ current.menu.name }}</h1>
+    @if (cart.message()) { <p role="status">{{ cart.message() }}</p> }
+    @if (selectionMessage()) { <p role="alert">{{ selectionMessage() }}</p> }
     @if (session.profile()) {
       <button type="button" [disabled]="savingFavorite()" (click)="saveFavorite(current.branchId)">Save favorite</button>
       @if (favoriteMessage()) { <p role="status">{{ favoriteMessage() }}</p> }
@@ -25,6 +27,26 @@
                 }
                 @for (option of item.addOns; track option.id) {
                   <p>{{ option.name }} +{{ option.extraMinor / 100 | currency:current.currency }}</p>
+                }
+                @if (item.available) {
+                  @if (item.variants.length) {
+                    <label>Variant
+                      <select [disabled]="cart.busy()" [(ngModel)]="chosenVariants[item.id]">
+                        <option [ngValue]="undefined">Choose a variant</option>
+                        @for (option of item.variants; track option.id) {
+                          <option [value]="option.id">{{ option.name }} +{{ option.extraMinor / 100 | currency:current.currency }}</option>
+                        }
+                      </select>
+                    </label>
+                  }
+                  @for (option of item.addOns; track option.id) {
+                    <label class="inline"><input type="checkbox" [disabled]="cart.busy()"
+                      [ngModel]="chosenAddOns[item.id]?.includes(option.id) ?? false"
+                      (ngModelChange)="chooseAddOn(item.id, option.id, $event)">{{ option.name }}</label>
+                  }
+                  <label>Quantity <input type="number" min="1" max="20" step="1" [disabled]="cart.busy()"
+                    [ngModel]="quantities[item.id] ?? 1" (ngModelChange)="quantities[item.id] = $event"></label>
+                  <button type="button" [disabled]="cart.busy()" (click)="addToCart(current.branchId, item)">Add to cart</button>
                 }
               </article>
             }

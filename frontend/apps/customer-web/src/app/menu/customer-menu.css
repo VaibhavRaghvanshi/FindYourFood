@@ -1,6 +1,13 @@
 :host { display: block; min-height: 100dvh; background: #fff9ee; color: #293a24; }
 main { width: min(1060px, 100% - 36px); margin-inline: auto; padding-bottom: 32px; }
 header img { border-radius: 12px; background: white; }
+header { display: flex; align-items: center; justify-content: space-between; }
+label { display: grid; gap: 5px; margin-block: 10px; }
+.inline { display: flex; align-items: center; gap: 5px; }
+input:not([type=checkbox]), select { font: inherit; padding: 8px; max-width: 100%; box-sizing: border-box; border: 1px solid #64755e; border-radius: 7px; }
+button { font: inherit; padding: 9px 14px; border-radius: 7px; border: 1px solid #365431; color: white; background: #365431; }
+button:disabled { opacity: .55; }
+a { color: #365431; }
 h1 { font: 500 clamp(2.3rem, 5vw, 4rem)/1 Georgia, serif; margin: 15px 0 25px; }
 .items { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: 12px; }
 article { background: #fffdf6; border: 1px solid #d4d9cb; border-radius: 14px; padding: 15px; }

@@ -10,7 +10,7 @@ const storageKey = 'findyourfood.customer-home.v1';
 @Component({
   selector: 'app-customer-home',
   imports: [ExperienceView, RouterLink],
-  template: '<nav aria-label="Customer tools"><a routerLink="/restaurants">Find food</a> · <a routerLink="/delivery-area">Check delivery area</a> · <a routerLink="/account">Account settings</a></nav><main><fyf-experience-view [configuration]="configuration()" /></main>',
+  template: '<nav aria-label="Customer tools"><a routerLink="/restaurants">Find food</a> · <a routerLink="/cart">Your cart</a> · <a routerLink="/delivery-area">Check delivery area</a> · <a routerLink="/account">Account settings</a></nav><main><fyf-experience-view [configuration]="configuration()" /></main>',
   styles: 'main { min-height: 100dvh; display: grid; }',
 })
 export class CustomerHome implements OnInit {

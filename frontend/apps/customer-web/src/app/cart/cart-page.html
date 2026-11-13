@@ -1,0 +1,57 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="68" height="68" alt="FindYourFood home"></a><a routerLink="/restaurants">Find food</a></header>
+  <h1>Your cart</h1>
+  <div class="actions">
+    <button type="button" [disabled]="cart.busy()" (click)="cart.load()">Reload cart</button>
+    <button type="button" [disabled]="cart.busy()" (click)="cart.discard()">Start a new cart</button>
+  </div>
+  @if (cart.busy()) { <p role="status">Updating your cart…</p> }
+  @if (cart.message()) { <p role="status">{{ cart.message() }}</p> }
+  @if (cart.view(); as current) {
+    <a [routerLink]="['/menu', current.branchId]">Back to this menu</a>
+    @if (!current.branchOpen) { <p>This restaurant is currently closed.</p> }
+    <div class="lines">
+      @for (line of current.prices.lines; track line.lineId) {
+        <article>
+          <h2>{{ line.name }}</h2>
+          @if (line.variant) { <p>{{ line.variant }}</p> }
+          @if (line.addOns.length) { <p>{{ line.addOns.join(' · ') }}</p> }
+          @if (line.error) { <p role="alert">{{ line.error }}</p> }
+          @else { <p>{{ line.unitPriceMinor / 100 | currency:current.currency }} each</p> }
+          <label>Quantity
+            <input type="number" min="1" max="20" step="1" [disabled]="cart.busy()" [ngModel]="line.quantity"
+              (ngModelChange)="cart.quantity(line.lineId, $event)">
+          </label>
+          <button type="button" [disabled]="cart.busy()" (click)="cart.remove(line.lineId)" [attr.aria-label]="'Remove ' + line.name">Remove</button>
+          @if (!line.error) { <strong>{{ line.totalMinor / 100 | currency:current.currency }}</strong> }
+        </article>
+      } @empty { <p>Your cart is empty. Choose something from the menu.</p> }
+    </div>
+    @if (current.prices.subtotalMinor !== null) {
+      <p class="total">Items {{ current.prices.subtotalMinor / 100 | currency:current.currency }}</p>
+    }
+    @if (current.selections.length && current.prices.subtotalMinor !== null) {
+      <form #location="ngForm" (ngSubmit)="cart.deliveryQuote(latitude, longitude)">
+        <fieldset [disabled]="cart.busy()">
+          <legend>Check delivery</legend>
+          <p>Enter your delivery coordinates to check the area and total.</p>
+          <label>Delivery latitude <input name="latitude" type="number" required min="-90" max="90" step="any"
+            [ngModel]="latitude" (ngModelChange)="locationChanged('latitude', $event)"></label>
+          <label>Delivery longitude <input name="longitude" type="number" required min="-180" max="180" step="any"
+            [ngModel]="longitude" (ngModelChange)="locationChanged('longitude', $event)"></label>
+          <button type="submit" [disabled]="location.invalid || !current.branchOpen">Get delivery quote</button>
+        </fieldset>
+      </form>
+    }
+    @if (cart.quote(); as quote) {
+      <section class="quote" aria-live="polite">
+        <h2>Delivery quote</h2>
+        <p>Items {{ (quote.cart.prices.subtotalMinor ?? 0) / 100 | currency:current.currency }}</p>
+        <p>Delivery {{ quote.deliveryFeeMinor / 100 | currency:current.currency }}</p>
+        <strong>Total {{ quote.totalMinor / 100 | currency:current.currency }}</strong>
+      </section>
+    }
+  } @else if (!cart.busy()) {
+    <p>Add something tasty to get started.</p><a routerLink="/restaurants">Explore restaurants</a>
+  }
+</main>

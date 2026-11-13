@@ -1,0 +1,15 @@
+:host { display: block; min-height: 100dvh; background: #fff9ee; color: #293a24; }
+main { width: min(900px, 100% - 36px); margin: auto; padding: 12px 0 40px; }
+header, .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+header { justify-content: space-between; }
+h1 { font: 500 clamp(2.8rem, 6vw, 4.6rem)/1 Georgia, serif; }
+header img { border-radius: 12px; }
+article, fieldset, .quote { background: #fffdf7; border: 1px solid #d4d9cb; border-radius: 14px; padding: 18px; margin: 14px 0; }
+label { display: grid; gap: 4px; margin-block: 10px; }
+input { border: 1px solid #64755e; border-radius: 7px; padding: 9px; font: inherit; max-width: 260px; }
+button { background: white; color: #293a24; border: 1px solid #64755e; border-radius: 7px; padding: 9px 14px; font: inherit; }
+button:disabled { opacity: .55; }
+a { color: #365431; }
+article strong { display: block; margin-top: 12px; }
+.total { font-size: 1.25rem; font-weight: 600; }
+h2 { margin: 0 0 10px; font: 600 1.5rem Georgia, serif; }
