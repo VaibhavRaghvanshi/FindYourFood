@@ -14,6 +14,7 @@
         <button type="button" [disabled]="busy()" (click)="cancel()">Cancel order</button>
       }
     </section>
+    <fyf-payment-panel [orderId]="current.id" [orderStatus]="current.status" [disabled]="current.status !== 'AwaitingPayment'" (changed)="load()" />
     <section>
       <h2>Your items</h2>
       @for (item of current.snapshot.items; track item.lineId) {

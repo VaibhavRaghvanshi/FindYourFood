@@ -7,7 +7,7 @@ export default defineConfig({
   workers: 1,
   expect: { timeout: 15_000 },
   use: {
-    baseURL: 'http://localhost:4201',
+    baseURL: 'http://localhost:' + (4201 + Number(process.env['FINDYOURFOOD_E2E_PORT_OFFSET'] ?? 0)),
     channel: process.env['FINDYOURFOOD_BROWSER'] || undefined,
   },
 });

@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../services/FindYourFood.Payment.Api/FindYourFood.Payment.Infrastructure/FindYourFood.Payment.Infrastructure.csproj" />
     <ProjectReference Include="../../services/FindYourFood.Ordering.Api/FindYourFood.Ordering.Infrastructure/FindYourFood.Ordering.Infrastructure.csproj" />
     <ProjectReference Include="../../services/FindYourFood.Cart.Api/FindYourFood.Cart.Infrastructure/FindYourFood.Cart.Infrastructure.csproj" />
     <ProjectReference Include="../../services/FindYourFood.Catalog.Api/FindYourFood.Catalog.Infrastructure/FindYourFood.Catalog.Infrastructure.csproj" />

@@ -1,4 +1,5 @@
 using FindYourFood.Ordering.Domain;
+using FindYourFood.Contracts;
 
 namespace FindYourFood.Ordering.Application.Interfaces;
 
@@ -13,4 +14,6 @@ public interface IOrderRepository
     void Add(Order order);
     void Add(CheckoutSaga saga);
     void Add(OrderOutboxMessage message);
+    Task<string?> InboxHashAsync(Guid id, CancellationToken ct);
+    void Add(InboxReceipt receipt);
 }

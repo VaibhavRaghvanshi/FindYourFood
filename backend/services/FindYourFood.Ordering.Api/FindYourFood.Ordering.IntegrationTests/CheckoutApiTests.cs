@@ -82,7 +82,7 @@ public sealed class CheckoutApiTests(OrderingFixture fixture) : IClassFixture<Or
         using (var scope = fixture.CreateScope())
         {
             var database = scope.ServiceProvider.GetRequiredService<OrderingDbContext>();
-            Assert.Equal(2, await database.Outbox.CountAsync(message => message.OrderId == order.Id));
+            Assert.Equal(2, await database.Outbox.CountAsync(message => message.AggregateId == order.Id));
             Assert.Single(await database.Sagas.ToListAsync());
         }
         Assert.Equal(HttpStatusCode.NotFound, (await other.PostAsync(route + "/cancel", null)).StatusCode);
@@ -92,7 +92,7 @@ public sealed class CheckoutApiTests(OrderingFixture fixture) : IClassFixture<Or
         using (var scope = fixture.CreateScope())
         {
             var database = scope.ServiceProvider.GetRequiredService<OrderingDbContext>();
-            Assert.Equal(4, await database.Outbox.CountAsync(message => message.OrderId == order.Id));
+            Assert.Equal(4, await database.Outbox.CountAsync(message => message.AggregateId == order.Id));
         }
 
         var expiringInput = input with { CartId = Guid.NewGuid(), IdempotencyKey = Guid.NewGuid(), ExpectedTotalMinor = 16900 };

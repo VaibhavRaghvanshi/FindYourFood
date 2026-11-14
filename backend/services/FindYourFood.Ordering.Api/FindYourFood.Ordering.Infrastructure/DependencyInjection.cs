@@ -5,6 +5,7 @@ using FindYourFood.Ordering.Infrastructure.Repositories;
 using FindYourFood.Ordering.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using FindYourFood.Contracts;
 
 namespace FindYourFood.Ordering.Infrastructure;
 
@@ -16,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUnitOfWork, OrderingUnitOfWork>();
         services.AddScoped<OrderCheckout>();
+        services.AddScoped<IIntegrationEventHandler>(provider => provider.GetRequiredService<OrderCheckout>());
         services.AddSingleton(TimeProvider.System);
         return services;
     }

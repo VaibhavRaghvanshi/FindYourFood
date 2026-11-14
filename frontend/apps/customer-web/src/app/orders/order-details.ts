@@ -5,9 +5,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom, interval } from 'rxjs';
 import { OrdersApi, OrderView, orderStatusLabels } from './orders-api';
+import { PaymentPanel } from './payment-panel';
 
 @Component({
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [CurrencyPipe, DatePipe, RouterLink, PaymentPanel],
   templateUrl: './order-details.html',
   styleUrl: '../cart/cart-page.css',
 })

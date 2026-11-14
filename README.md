@@ -37,7 +37,7 @@ $env:Tokens__PublicKeyPath = Join-Path $localState 'keys/identity-public.pem'
 dotnet run --project $gateway
 ```
 
-Stop tracked processes with `.\scripts\Stop-DevelopmentServices.ps1`. Terminate manually launched processes in their own terminal. RabbitMQ, Kafka, Valkey and OTLP collectors belong to later integration profiles.
+Stop tracked processes with `.\scripts\Stop-DevelopmentServices.ps1`. Terminate manually launched processes in their own terminal. RabbitMQ belongs to the optional Payment profile described in [Payment and messaging](docs/api-contracts/PAYMENT.md); stop its workspace broker separately with `Stop-MessagingBroker.ps1`. Kafka, Valkey and OTLP collectors have separate integration milestones.
 
 ## Run the staff portal
 

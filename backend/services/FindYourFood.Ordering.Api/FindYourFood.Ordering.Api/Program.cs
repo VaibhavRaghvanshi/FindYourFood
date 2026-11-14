@@ -5,6 +5,8 @@ using FindYourFood.Ordering.Api.Workers;
 using FindYourFood.Ordering.Api.HealthChecks;
 using FindYourFood.Ordering.Infrastructure;
 using FindYourFood.Hosting;
+using FindYourFood.Messaging;
+using FindYourFood.Ordering.Infrastructure.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,8 @@ builder.Services.AddHttpClient<ICartCheckout, CartCheckoutClient>(client =>
     client.Timeout = TimeSpan.FromSeconds(5);
 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
 builder.Services.AddHostedService<CheckoutTimeoutWorker>();
+builder.Services.AddReliableMessaging<OrderingDbContext>(builder.Configuration, builder.Environment, "ordering",
+    "payment.succeeded.v1", "payment.failed.v1", "payment.refunded.v1");
 var app = builder.Build();
 app.UseFindYourFoodHosting();
 app.UseAuthentication();

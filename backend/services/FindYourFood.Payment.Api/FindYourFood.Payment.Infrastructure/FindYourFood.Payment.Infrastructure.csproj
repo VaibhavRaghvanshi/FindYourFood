@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../../building-blocks/FindYourFood.Messaging/FindYourFood.Messaging.csproj" />
+    <ProjectReference Include="../FindYourFood.Payment.Application/FindYourFood.Payment.Application.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+</Project>

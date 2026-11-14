@@ -2,6 +2,8 @@ using FindYourFood.Ordering.Application.Interfaces;
 using FindYourFood.Ordering.Domain;
 using FindYourFood.Ordering.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using FindYourFood.Contracts;
+using FindYourFood.Messaging;
 
 namespace FindYourFood.Ordering.Infrastructure.Repositories;
 
@@ -33,5 +35,12 @@ internal sealed class OrderRepository(OrderingDbContext database) : IOrderReposi
 
     public void Add(Order order) => database.Orders.Add(order);
     public void Add(CheckoutSaga saga) => database.Sagas.Add(saga);
-    public void Add(OrderOutboxMessage message) => database.Outbox.Add(message);
+    public void Add(OrderOutboxMessage message) => database.Outbox.Add(new OutboxRecord(message.Id, "ordering", message.Type,
+        message.OrderId, message.AggregateVersion, message.PayloadJson, message.OccurredAt));
+
+    public Task<string?> InboxHashAsync(Guid id, CancellationToken ct) =>
+        database.Set<InboxRecord>().AsNoTracking().Where(row => row.MessageId == id)
+            .Select(row => row.ContentHash).SingleOrDefaultAsync(ct);
+
+    public void Add(InboxReceipt receipt) => database.Set<InboxRecord>().Add(InboxRecord.From(receipt));
 }

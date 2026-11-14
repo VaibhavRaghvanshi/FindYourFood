@@ -1,0 +1,74 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "payment-get": {
+        "ClusterId": "payment",
+        "AuthorizationPolicy": "anonymous",
+        "Match": {
+          "Path": "/api/v1/payments/orders/{order:guid}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "payment-simulate": {
+        "ClusterId": "payment",
+        "AuthorizationPolicy": "anonymous",
+        "MaxRequestBodySize": 2048,
+        "Match": {
+          "Path": "/api/v1/payments/orders/{order:guid}/simulate",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "payment-webhook": {
+        "ClusterId": "payment",
+        "AuthorizationPolicy": "anonymous",
+        "MaxRequestBodySize": 8192,
+        "Match": {
+          "Path": "/api/v1/payments/webhooks/development",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "payment": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5111/"
+          }
+        }
+      }
+    }
+  }
+}

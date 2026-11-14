@@ -2,6 +2,10 @@
   <Folder Name="/backend/" />
   <Folder Name="/backend/building-blocks/">
     <Project Path="backend/building-blocks/FindYourFood.Hosting/FindYourFood.Hosting.csproj" />
+    <Project Path="backend/building-blocks/FindYourFood.Messaging/FindYourFood.Messaging.csproj" />
+  </Folder>
+  <Folder Name="/backend/contracts/">
+    <Project Path="backend/contracts/FindYourFood.Contracts/FindYourFood.Contracts.csproj" />
   </Folder>
   <Folder Name="/backend/gateway/">
     <Project Path="backend/gateway/FindYourFood.ApiGateway/FindYourFood.ApiGateway.csproj" />
@@ -81,6 +85,14 @@
     <Project Path="backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.Infrastructure/FindYourFood.Organization.Infrastructure.csproj" />
     <Project Path="backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.IntegrationTests/FindYourFood.Organization.IntegrationTests.csproj" />
     <Project Path="backend/services/FindYourFood.Organization.Api/FindYourFood.Organization.UnitTests/FindYourFood.Organization.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/backend/services/FindYourFood.Payment.Api/">
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.Api/FindYourFood.Payment.Api.csproj" />
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.Application/FindYourFood.Payment.Application.csproj" />
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.Domain/FindYourFood.Payment.Domain.csproj" />
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.Infrastructure/FindYourFood.Payment.Infrastructure.csproj" />
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.IntegrationTests/FindYourFood.Payment.IntegrationTests.csproj" />
+    <Project Path="backend/services/FindYourFood.Payment.Api/FindYourFood.Payment.UnitTests/FindYourFood.Payment.UnitTests.csproj" />
   </Folder>
   <Folder Name="/backend/services/FindYourFood.Provider.Api/">
     <Project Path="backend/services/FindYourFood.Provider.Api/FindYourFood.Provider.Api/FindYourFood.Provider.Api.csproj" />

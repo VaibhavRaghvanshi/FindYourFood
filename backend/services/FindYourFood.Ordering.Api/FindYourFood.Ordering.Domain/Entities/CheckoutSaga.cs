@@ -8,6 +8,7 @@ public sealed class CheckoutSaga(Guid orderId, DateTimeOffset paymentDeadline)
     public DateTimeOffset PaymentDeadline { get; private set; } = paymentDeadline;
     public CheckoutState State { get; private set; } = CheckoutState.WaitingForPayment;
     public bool PaymentConfirmed { get; private set; }
+    public Guid? PaymentId { get; private set; }
     public long Revision { get; private set; } = 1;
 
     public void Cancel()
@@ -16,13 +17,21 @@ public sealed class CheckoutSaga(Guid orderId, DateTimeOffset paymentDeadline)
         Revision++;
     }
 
-    public bool ConfirmPayment()
+    public bool ConfirmPayment(Guid paymentId)
     {
         if (PaymentConfirmed) return false;
         PaymentConfirmed = true;
+        PaymentId = paymentId;
         State = State == CheckoutState.Cancelled ? CheckoutState.Compensating : CheckoutState.WaitingForProvider;
         Revision++;
         return true;
+    }
+
+    public void ConfirmRefund()
+    {
+        if (!PaymentConfirmed || State != CheckoutState.Compensating) return;
+        State = CheckoutState.Cancelled;
+        Revision++;
     }
 
     public void AwaitDelivery()

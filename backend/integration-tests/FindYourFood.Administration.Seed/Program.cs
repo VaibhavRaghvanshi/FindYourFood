@@ -12,10 +12,14 @@ using FindYourFood.Location.Infrastructure.Data;
 using FindYourFood.Discovery.Infrastructure.Data;
 using FindYourFood.Cart.Infrastructure.Data;
 using FindYourFood.Ordering.Infrastructure.Data;
+using FindYourFood.Payment.Infrastructure.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using FindYourFood.Messaging;
+using FindYourFood.Ordering.Domain;
+using RabbitMQ.Client;
 using OtpNet;
 
 var identity = IsolatedConnection("ConnectionStrings__Identity", "FindYourFood_IdentityTest_");
@@ -55,15 +59,33 @@ await using var locationDatabase = marketplace ? TestDatabase<LocationDbContext>
 await using var discoveryDatabase = marketplace ? TestDatabase<DiscoveryDbContext>("Discovery", options => new(options)) : null;
 await using var cartDatabase = marketplace ? TestDatabase<CartDbContext>("Cart", options => new(options)) : null;
 await using var orderingDatabase = marketplace ? TestDatabase<OrderingDbContext>("Ordering", options => new(options)) : null;
-DbContext?[] marketplaceDatabases = [catalogDatabase, customerDatabase, locationDatabase, discoveryDatabase, cartDatabase, orderingDatabase];
+await using var paymentDatabase = args.Contains("--payments", StringComparer.Ordinal)
+    ? TestDatabase<PaymentDbContext>("Payment", options => new(options)) : null;
+DbContext?[] marketplaceDatabases = [catalogDatabase, customerDatabase, locationDatabase, discoveryDatabase, cartDatabase, orderingDatabase, paymentDatabase];
 
-if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider" or "--marketplace")))
+if (args.Any(argument => argument is not ("--cleanup" or "--experience" or "--provider" or "--marketplace" or "--payments" or "--verify-payments" or "--diagnose-payments")))
 {
     throw new ArgumentException("Use --experience or --provider to include a service, and --cleanup to remove isolated databases.");
 }
 
 if (args.Contains("--cleanup", StringComparer.Ordinal))
 {
+    if (paymentDatabase is not null)
+    {
+        var catalog = new SqlConnectionStringBuilder(IsolatedConnection("ConnectionStrings__Payment", "FindYourFood_PaymentTest_")).InitialCatalog;
+        var prefix = "findyourfood.test." + catalog["FindYourFood_PaymentTest_".Length..];
+        var factory = new ConnectionFactory { HostName = "localhost", UserName = "findyourfood", VirtualHost = "findyourfood",
+            Password = File.ReadAllText(Required("Messaging__PasswordPath")).Trim() };
+        await using var broker = await factory.CreateConnectionAsync();
+        await using var channel = await broker.CreateChannelAsync();
+        foreach (var service in new[] { "ordering", "payment" })
+        {
+            await channel.QueueDeclareAsync(prefix + "." + service, durable: true, exclusive: false, autoDelete: false);
+            await channel.QueueDeleteAsync(prefix + "." + service, ifUnused: false, ifEmpty: false);
+        }
+        await channel.ExchangeDeclareAsync(prefix + ".events", ExchangeType.Topic, durable: true, autoDelete: false);
+        await channel.ExchangeDeleteAsync(prefix + ".events", ifUnused: false);
+    }
     await identityDatabase.Database.EnsureDeletedAsync();
     await organizationDatabase.Database.EnsureDeletedAsync();
     if (experienceDatabase is not null)
@@ -80,6 +102,43 @@ if (args.Contains("--cleanup", StringComparer.Ordinal))
         if (database is not null) await database.Database.EnsureDeletedAsync();
     }
     return;
+}
+
+if (args.Contains("--diagnose-payments", StringComparer.Ordinal))
+{
+    if (paymentDatabase is null || orderingDatabase is null) throw new InvalidOperationException("Payments profile required.");
+    Console.WriteLine(JsonSerializer.Serialize(new
+    {
+        orders = await orderingDatabase.Orders.AsNoTracking().GroupBy(row => row.Stage).Select(group => new { stage = group.Key, count = group.Count() }).ToArrayAsync(),
+        sagas = await orderingDatabase.Sagas.AsNoTracking().GroupBy(row => row.State).Select(group => new { state = group.Key, count = group.Count() }).ToArrayAsync(),
+        payments = await paymentDatabase.Intents.AsNoTracking().GroupBy(row => row.State).Select(group => new { state = group.Key, count = group.Count() }).ToArrayAsync(),
+        refundJobs = await paymentDatabase.Set<FindYourFood.Payment.Domain.RefundInstruction>().AsNoTracking().Select(row => new { row.Completed, row.Attempts, row.NextRetryAt }).ToArrayAsync(),
+        orderingOutbox = await orderingDatabase.Set<OutboxRecord>().AsNoTracking().Select(row => new { row.Type, row.PublishedAt, row.FailedAt, row.Attempts, row.LastError }).ToArrayAsync(),
+        paymentOutbox = await paymentDatabase.Set<OutboxRecord>().AsNoTracking().Select(row => new { row.Type, row.PublishedAt, row.FailedAt, row.Attempts, row.LastError }).ToArrayAsync(),
+        rejected = await paymentDatabase.Set<RejectedMessage>().AsNoTracking().Select(row => row.Reason).ToArrayAsync()
+    }));
+    return;
+}
+
+if (args.Contains("--verify-payments", StringComparer.Ordinal))
+{
+    if (paymentDatabase is null || orderingDatabase is null) throw new InvalidOperationException("Payments profile required.");
+    var deadline = DateTimeOffset.UtcNow.AddSeconds(30);
+    do
+    {
+        var settled = await orderingDatabase.Sagas.AsNoTracking().CountAsync(row => row.State == CheckoutState.Cancelled && row.PaymentConfirmed);
+        var confirmations = await paymentDatabase.Set<OutboxRecord>().CountAsync(row => row.PublishedAt != null && row.Type == "payment.succeeded.v1");
+        var refunds = await paymentDatabase.Set<OutboxRecord>().CountAsync(row => row.PublishedAt != null && row.Type == "payment.refunded.v1");
+        if (settled == 2 && confirmations == 2 && refunds == 2)
+        {
+            if (await paymentDatabase.Set<RejectedMessage>().AnyAsync() || await orderingDatabase.Set<RejectedMessage>().AnyAsync())
+                throw new InvalidOperationException("Unexpected rejected broker messages.");
+            Console.WriteLine("Verified two broker-confirmed payments and two completed refund sagas.");
+            return;
+        }
+        await Task.Delay(500);
+    } while (DateTimeOffset.UtcNow < deadline);
+    throw new InvalidOperationException("Payment/refund broker verification timed out.");
 }
 
 await identityDatabase.Database.MigrateAsync();

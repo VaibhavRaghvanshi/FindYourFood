@@ -22,6 +22,127 @@ namespace FindYourFood.Ordering.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FindYourFood.Messaging.InboxRecord", b =>
+                {
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTimeOffset>("ProcessedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("MessageId");
+
+                    b.ToTable("Inbox", (string)null);
+                });
+
+            modelBuilder.Entity("FindYourFood.Messaging.OutboxRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AggregateId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("OrderId");
+
+                    b.Property<long>("AggregateVersion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(1L);
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("FailedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("LeaseOwner")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("LeaseUntil")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasDefaultValue("ordering");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AggregateId");
+
+                    b.HasIndex("PublishedAt", "OccurredAt");
+
+                    b.HasIndex("FailedAt", "NextAttemptAt", "LeaseUntil");
+
+                    b.ToTable("Outbox", (string)null);
+                });
+
+            modelBuilder.Entity("FindYourFood.Messaging.RejectedMessage", b =>
+                {
+                    b.Property<string>("ContentHash")
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<string>("BodyBase64")
+                        .IsRequired()
+                        .HasMaxLength(90000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("ContentHash");
+
+                    b.ToTable("RejectedMessages", (string)null);
+                });
+
             modelBuilder.Entity("FindYourFood.Ordering.Domain.CheckoutSaga", b =>
                 {
                     b.Property<Guid>("OrderId")
@@ -32,6 +153,9 @@ namespace FindYourFood.Ordering.Infrastructure.Migrations
 
                     b.Property<DateTimeOffset>("PaymentDeadline")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Revision")
                         .IsConcurrencyToken()
@@ -111,36 +235,13 @@ namespace FindYourFood.Ordering.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("FindYourFood.Ordering.Domain.OrderOutboxMessage", b =>
+            modelBuilder.Entity("FindYourFood.Messaging.OutboxRecord", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("OccurredAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PayloadJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("PublishedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("PublishedAt", "OccurredAt");
-
-                    b.ToTable("Outbox");
+                    b.HasOne("FindYourFood.Ordering.Domain.Order", null)
+                        .WithMany()
+                        .HasForeignKey("AggregateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FindYourFood.Ordering.Domain.CheckoutSaga", b =>
@@ -148,15 +249,6 @@ namespace FindYourFood.Ordering.Infrastructure.Migrations
                     b.HasOne("FindYourFood.Ordering.Domain.Order", null)
                         .WithOne()
                         .HasForeignKey("FindYourFood.Ordering.Domain.CheckoutSaga", "OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FindYourFood.Ordering.Domain.OrderOutboxMessage", b =>
-                {
-                    b.HasOne("FindYourFood.Ordering.Domain.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

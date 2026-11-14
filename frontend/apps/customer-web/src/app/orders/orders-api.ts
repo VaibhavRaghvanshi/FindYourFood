@@ -66,7 +66,7 @@ export class OrdersApi {
 
   guestOrders() { return this.guestAccess.map((entry) => entry.id); }
 
-  private headers(id: string): Record<string, string> {
+  headers(id: string): Record<string, string> {
     const key = this.guestAccess.find((entry) => entry.id === id)?.key;
     return { ...this.cart.headers(), ...(key ? { 'X-Cart-Key': key } : {}) };
   }

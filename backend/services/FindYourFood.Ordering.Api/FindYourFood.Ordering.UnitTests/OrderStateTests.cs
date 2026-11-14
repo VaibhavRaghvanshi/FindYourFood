@@ -19,8 +19,9 @@ public sealed class OrderStateTests
         Assert.False(order.MoveTo(OrderStage.Cancelled, now));
         var saga = new CheckoutSaga(order.Id, now.AddMinutes(15));
         saga.Cancel();
-        Assert.True(saga.ConfirmPayment());
+        var payment = Guid.NewGuid();
+        Assert.True(saga.ConfirmPayment(payment));
         Assert.Equal(CheckoutState.Compensating, saga.State);
-        Assert.False(saga.ConfirmPayment());
+        Assert.False(saga.ConfirmPayment(payment));
     }
 }

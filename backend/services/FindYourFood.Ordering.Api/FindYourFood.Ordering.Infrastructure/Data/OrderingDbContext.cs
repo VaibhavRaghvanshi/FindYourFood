@@ -1,6 +1,7 @@
 using FindYourFood.Ordering.Domain;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using FindYourFood.Messaging;
 
 namespace FindYourFood.Ordering.Infrastructure.Data;
 
@@ -8,7 +9,7 @@ public sealed class OrderingDbContext(DbContextOptions<OrderingDbContext> option
 {
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<CheckoutSaga> Sagas => Set<CheckoutSaga>();
-    public DbSet<OrderOutboxMessage> Outbox => Set<OrderOutboxMessage>();
+    public DbSet<OutboxRecord> Outbox => Set<OutboxRecord>();
 
     public static string OwnedConnection(string connection)
     {
@@ -40,11 +41,9 @@ public sealed class OrderingDbContext(DbContextOptions<OrderingDbContext> option
         saga.Property(row => row.Revision).IsConcurrencyToken();
         saga.HasIndex(row => new { row.State, row.PaymentDeadline });
         saga.HasOne<Order>().WithOne().HasForeignKey<CheckoutSaga>(row => row.OrderId).OnDelete(DeleteBehavior.Restrict);
-        var message = model.Entity<OrderOutboxMessage>();
-        message.HasKey(row => row.Id);
-        message.Property(row => row.Id).ValueGeneratedNever();
-        message.Property(row => row.Type).HasMaxLength(100);
-        message.HasIndex(row => new { row.PublishedAt, row.OccurredAt });
-        message.HasOne<Order>().WithMany().HasForeignKey(row => row.OrderId).OnDelete(DeleteBehavior.Restrict);
+        MessagingModel.Configure(model);
+        var message = model.Entity<OutboxRecord>();
+        message.Property(row => row.Source).HasDefaultValue("ordering");
+        message.HasOne<Order>().WithMany().HasForeignKey(row => row.AggregateId).OnDelete(DeleteBehavior.Restrict);
     }
 }

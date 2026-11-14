@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 import { readStaffAccounts, signIn } from './staff-fixture';
 
-const homepage = 'http://localhost:4200/home';
+const homepage = 'http://localhost:' + (4200 + Number(process.env['FINDYOURFOOD_E2E_PORT_OFFSET'] ?? 0)) + '/home';
 const publicConfig = '**/api/v1/experience/customer-home';
 
 async function publish(owner: Page, title: string, version: number) {

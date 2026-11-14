@@ -1,6 +1,6 @@
 # Database catalog
 
-The named local instance is `.\MSSQL22` on this machine. Ten of the sixteen planned service databases have applied local migrations. Each migration belongs to its service's Infrastructure project.
+The named local instance is `.\MSSQL22` on this machine. Eleven of the sixteen planned service databases have applied local migrations. Each migration belongs to its service's Infrastructure project.
 
 | Database | Local migration status |
 | --- | --- |
@@ -14,7 +14,7 @@ The named local instance is `.\MSSQL22` on this machine. Ten of the sixteen plan
 | `FindYourFood_CartDb` | Applied |
 | `FindYourFood_OrderingDb` | Applied |
 | `FindYourFood_DeliveryDb` | Planned |
-| `FindYourFood_PaymentDb` | Planned |
+| `FindYourFood_PaymentDb` | Applied |
 | `FindYourFood_FinanceDb` | Planned |
 | `FindYourFood_NotificationDb` | Planned |
 | `FindYourFood_ExperienceDb` | Applied |

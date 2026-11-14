@@ -115,7 +115,12 @@ function Start-DevelopmentProcess {
     RedirectStandardOutput = Join-Path $localState "$Name.stdout.log"
     RedirectStandardError = Join-Path $localState "$Name.stderr.log"
   }
-  $process = Start-Process @options
+  $serverGc = $env:DOTNET_gcServer
+  try {
+    # Multiple independent development APIs share one workstation.
+    if ([IO.Path]::GetFileNameWithoutExtension($Executable) -eq 'dotnet' -and !$serverGc) { $env:DOTNET_gcServer = '0' }
+    $process = Start-Process @options
+  } finally { $env:DOTNET_gcServer = $serverGc }
   @{ Id = $process.Id; StartTicks = "$($process.StartTime.ToUniversalTime().Ticks)" } | ConvertTo-Json |
     Set-Content -LiteralPath (Join-Path $localState "$Name.json")
   return $process
@@ -124,7 +129,12 @@ function Start-DevelopmentProcess {
 function Stop-DevelopmentProcess {
   param([string]$Name)
   $process = Get-DevelopmentProcess $Name
-  if ($process) { Stop-Process -Id $process.Id -ErrorAction SilentlyContinue }
+  if ($process) {
+    try {
+      $process.Kill($true)
+      [void]$process.WaitForExit(5000)
+    } catch [InvalidOperationException] { }
+  }
   $path = Join-Path $localState "$Name.json"
   if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path }
 }
