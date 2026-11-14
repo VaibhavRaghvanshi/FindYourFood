@@ -1,0 +1,37 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="68" height="68" alt="FindYourFood home"></a><a routerLink="/orders">Your orders</a></header>
+  <h1>Order status</h1>
+  @if (message()) { <p role="alert">{{ message() }}</p><a routerLink="/">Sign in</a> }
+  <button type="button" [disabled]="busy()" (click)="load()">Reload status</button>
+  @if (order(); as current) {
+    <section class="quote" aria-live="polite">
+      <h2>{{ labels[current.status] ?? current.status }}</h2>
+      <p>{{ current.snapshot.menuName }}</p>
+      <p>Placed {{ current.createdAt | date:'medium' }}</p>
+      <p>Updated {{ current.updatedAt | date:'medium' }}</p>
+      <p>Order reference {{ current.id }}</p>
+      @if (current.status === 'AwaitingPayment' || current.status === 'Placed') {
+        <button type="button" [disabled]="busy()" (click)="cancel()">Cancel order</button>
+      }
+    </section>
+    <section>
+      <h2>Your items</h2>
+      @for (item of current.snapshot.items; track item.lineId) {
+        <article>
+          <h3>{{ item.quantity }} × {{ item.name }}</h3>
+          @if (item.variantName) { <p>{{ item.variantName }}</p> }
+          @if (item.addOnNames.length) { <p>{{ item.addOnNames.join(' · ') }}</p> }
+          <strong>{{ item.totalMinor / 100 | currency:current.snapshot.currency }}</strong>
+        </article>
+      }
+      <p>Items {{ current.snapshot.itemsMinor / 100 | currency:current.snapshot.currency }}</p>
+      <p>Delivery {{ current.snapshot.deliveryFeeMinor / 100 | currency:current.snapshot.currency }}</p>
+      <strong>Total {{ current.snapshot.totalMinor / 100 | currency:current.snapshot.currency }}</strong>
+    </section>
+    <section>
+      <h2>Delivery address</h2>
+      <p>{{ current.snapshot.delivery.name }} · {{ current.snapshot.delivery.phone }}</p>
+      <p>{{ current.snapshot.delivery.street }}<br>{{ current.snapshot.delivery.city }} {{ current.snapshot.delivery.postalCode }}</p>
+    </section>
+  }
+</main>

@@ -10,7 +10,7 @@ public sealed record GeoPoint(double Latitude, double Longitude)
     public bool IsValid => Latitude is >= -90 and <= 90 && Longitude is >= -180 and <= 180;
 }
 public sealed record QuoteRequest(long ExpectedRevision, GeoPoint Destination);
-public sealed record CartView(Guid Id, Guid BranchId, long Revision, DateTimeOffset ExpiresAt, string Currency,
+public sealed record CartView(Guid Id, Guid BranchId, string MenuName, long Revision, DateTimeOffset ExpiresAt, string Currency,
     long MenuVersion, bool BranchOpen, IReadOnlyList<CartSelection> Selections, CartPrices Prices);
 public sealed record CreatedCart(CartView Cart, string? GuestKey);
 public sealed record DeliveryQuote(bool Serviceable, Guid? ZoneId, int? DeliveryFeeMinor, double? DistanceKm);

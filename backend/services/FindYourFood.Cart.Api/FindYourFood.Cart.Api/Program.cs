@@ -1,4 +1,3 @@
-using FindYourFood.Cart.Api.Controllers;
 using FindYourFood.Cart.Application.Interfaces;
 using FindYourFood.Cart.Infrastructure.Http;
 using FindYourFood.Cart.Api.HealthChecks;
@@ -16,7 +15,7 @@ builder.Services.AddCart(builder.Configuration.GetConnectionString("Cart")
     ?? throw new InvalidOperationException("Configure ConnectionStrings:Cart."));
 
 TokenSettings.FromConfiguration(builder.Configuration).ConfigureBearer(builder.Services);
-builder.Services.AddScoped<CartCustomerFilter>();
+builder.Services.AddScoped<CustomerRequestFilter>();
 foreach (var service in new[] { "Provider", "Catalog", "Location" })
 {
     builder.Services.AddHttpClient(service.ToLowerInvariant(), client =>

@@ -1,4 +1,4 @@
-:host { display: block; min-height: 100dvh; background: #fff9ee; color: #293a24; }
+:host { display: block; min-height: 100dvh; background: #fff9ee; color: #293a24; overflow-wrap: anywhere; }
 main { width: min(900px, 100% - 36px); margin: auto; padding: 12px 0 40px; }
 header, .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 header { justify-content: space-between; }

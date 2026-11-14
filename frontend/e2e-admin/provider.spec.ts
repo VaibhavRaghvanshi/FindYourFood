@@ -131,6 +131,19 @@ test('a provider submits documents, staff approve it, and the provider manages a
     await customer.getByLabel('Delivery longitude').fill('73.85');
     await customer.getByRole('button', { name: 'Get delivery quote', exact: true }).click();
     await expect(customer.locator('.quote')).toContainText('₹159.00');
+    await customer.getByRole('link', { name: 'Continue to checkout' }).click();
+    await customer.getByLabel('Recipient name').fill('Sample Customer');
+    await customer.getByLabel('Phone number', { exact: true }).fill('+919999999999');
+    await customer.getByLabel('Street address').fill('Synthetic delivery address');
+    await customer.getByLabel('City', { exact: true }).fill('Pune');
+    await customer.getByLabel('Postal code').fill('411001');
+    await customer.getByRole('button', { name: 'Place order', exact: true }).click();
+    await expect(customer.getByRole('heading', { name: 'Awaiting payment', exact: true })).toBeVisible();
+    await expect(customer.getByText('Total ₹159.00', { exact: true })).toBeVisible();
+    await customer.getByRole('button', { name: 'Cancel order', exact: true }).click();
+    await expect(customer.getByRole('heading', { name: 'Cancelled', exact: true })).toBeVisible();
+    await customer.getByRole('link', { name: 'Your orders', exact: true }).click();
+    await expect(customer.getByRole('link', { name: 'Green Leaf lunch', exact: true })).toBeVisible();
 
     const guest = await context.newPage();
     await guest.goto(menuUrl);
@@ -142,5 +155,22 @@ test('a provider submits documents, staff approve it, and the provider manages a
     await guest.setViewportSize({ width: 390, height: 844 });
     expect(await guest.evaluate(() => globalThis.document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await guest.screenshot({ path: 'test-results/marketplace-cart-mobile.png', fullPage: true });
+    await guest.getByLabel('Delivery latitude').fill('18.52');
+    await guest.getByLabel('Delivery longitude').fill('73.85');
+    await guest.getByRole('button', { name: 'Get delivery quote', exact: true }).click();
+    await guest.getByRole('link', { name: 'Continue to checkout' }).click();
+    await guest.getByLabel('Recipient name').fill('Sample Guest');
+    await guest.getByLabel('Phone number', { exact: true }).fill('+919999999999');
+    await guest.getByLabel('Street address').fill('Synthetic guest address');
+    await guest.getByLabel('City', { exact: true }).fill('Pune');
+    await guest.getByLabel('Postal code').fill('411001');
+    await guest.getByRole('button', { name: 'Place order', exact: true }).click();
+    await expect(guest.getByRole('heading', { name: 'Awaiting payment', exact: true })).toBeVisible();
+    await guest.reload();
+    await expect(guest.getByRole('heading', { name: 'Awaiting payment', exact: true })).toBeVisible();
+    expect(await guest.evaluate(() => globalThis.document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await guest.screenshot({ path: 'test-results/marketplace-order-mobile.png', fullPage: true });
+    await guest.getByRole('button', { name: 'Cancel order', exact: true }).click();
+    await expect(guest.getByRole('heading', { name: 'Cancelled', exact: true })).toBeVisible();
   }
 });

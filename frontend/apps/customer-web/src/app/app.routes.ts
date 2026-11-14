@@ -2,6 +2,21 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'checkout',
+    title: 'Checkout | FindYourFood',
+    loadComponent: () => import('./orders/checkout-page').then((module) => module.CheckoutPage),
+  },
+  {
+    path: 'orders/:id',
+    title: 'Order status | FindYourFood',
+    loadComponent: () => import('./orders/order-details').then((module) => module.OrderDetails),
+  },
+  {
+    path: 'orders',
+    title: 'Your orders | FindYourFood',
+    loadComponent: () => import('./orders/order-history').then((module) => module.OrderHistory),
+  },
+  {
     path: 'cart',
     title: 'Your cart | FindYourFood',
     loadComponent: () => import('./cart/cart-page').then((module) => module.CartPage),

@@ -1,0 +1,42 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="68" height="68" alt="FindYourFood home"></a><a routerLink="/cart">Your cart</a></header>
+  <h1>Checkout</h1>
+  @if (message()) { <p role="alert">{{ message() }}</p> }
+  @if (cart.message()) { <p role="status">{{ cart.message() }}</p> }
+  @if (existingOrder(); as id) { <a [routerLink]="['/orders', id]">Open your existing order</a> }
+  @if (cart.view(); as current) {
+    <p>{{ current.menuName }}</p>
+    @if (addresses().length) {
+      <section class="actions" aria-label="Saved addresses">
+        @for (address of addresses(); track address.id) {
+          <button type="button" [disabled]="busy() || cart.busy()" (click)="selectAddress(address)">Use {{ address.label }}</button>
+        }
+      </section>
+    }
+    <form #form="ngForm" (ngSubmit)="place()">
+      <fieldset [disabled]="busy() || cart.busy()">
+        <legend>Delivery details</legend>
+        <label>Recipient name <input name="name" required maxlength="80" autocomplete="name" [(ngModel)]="name"></label>
+        <label>Phone number <input name="phone" type="tel" required pattern="[+]?[0-9]{10,15}" maxlength="16" autocomplete="tel" placeholder="+919999999999" [(ngModel)]="phone"></label>
+        <label>Street address <input name="street" required maxlength="220" autocomplete="street-address" [(ngModel)]="street"></label>
+        <label>City <input name="city" required maxlength="100" autocomplete="address-level2" [(ngModel)]="city"></label>
+        <label>Postal code <input name="postal" required minlength="3" maxlength="12" autocomplete="postal-code" [(ngModel)]="postalCode"></label>
+        <label>Delivery latitude <input name="latitude" type="number" required min="-90" max="90" step="any"
+          [ngModel]="latitude" (ngModelChange)="locationChanged('latitude', $event)"></label>
+        <label>Delivery longitude <input name="longitude" type="number" required min="-180" max="180" step="any"
+          [ngModel]="longitude" (ngModelChange)="locationChanged('longitude', $event)"></label>
+        <p>Use the location that matches this delivery address.</p>
+        <button type="button" [disabled]="latitude === null || longitude === null" (click)="cart.deliveryQuote(latitude, longitude)">Update delivery total</button>
+      </fieldset>
+      @if (cart.quote(); as quote) {
+        <section class="quote" aria-live="polite">
+          <h2>Your total</h2>
+          <p>Items {{ (quote.cart.prices.subtotalMinor ?? 0) / 100 | currency:current.currency }}</p>
+          <p>Delivery {{ quote.deliveryFeeMinor / 100 | currency:current.currency }}</p>
+          <strong>Total {{ quote.totalMinor / 100 | currency:current.currency }}</strong>
+        </section>
+        <button type="submit" [disabled]="form.invalid || busy() || cart.busy()">Place order</button>
+      } @else { <p>Update your delivery total to continue.</p> }
+    </form>
+  } @else if (!cart.busy()) { <p>Your cart is empty.</p><a routerLink="/restaurants">Find food</a> }
+</main>

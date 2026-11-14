@@ -11,7 +11,7 @@ export interface PricedLine {
   addOns: string[]; unitPriceMinor: number; totalMinor: number; error: string | null;
 }
 export interface CartView {
-  id: string; branchId: string; revision: number; expiresAt: string; currency: string; menuVersion: number;
+  id: string; branchId: string; menuName: string; revision: number; expiresAt: string; currency: string; menuVersion: number;
   branchOpen: boolean; selections: CartSelection[]; prices: { lines: PricedLine[]; subtotalMinor: number | null };
 }
 export interface CartQuote {

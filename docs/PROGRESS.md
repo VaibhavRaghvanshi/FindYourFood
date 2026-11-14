@@ -72,3 +72,12 @@ The foundation implements the Identity host, its Clean Architecture projects and
 - Added customer carts and guest carts with a hashed 256-bit capability, revision checks, 24-hour expiry, current published prices, variant/add-on validation and fresh delivery quotes.
 - Passed the Cart pricing unit test and SQL integration test, including cross-account access, concurrent updates, price changes, delivery rejection, restoration, discard and expiry. All three Angular apps built.
 - Passed the expanded Edge browser flow for authenticated and guest carts, delivery totals and guest refresh persistence. Checked the mobile screenshot with the supplied logo and confirmed no horizontal overflow at 390 pixels. Temporary databases were removed.
+
+## November 14, 2026 — Ordering checkpoint
+
+- Applied `FindYourFood_OrderingDb`. EF Core reported no pending model changes, and SQL confirmed ten regular service databases online.
+- Checkout obtains a fresh Cart quote and binds the confirmed total and delivery details to an immutable order snapshot. SQL enforces scoped idempotency and a unique cart/revision pair. Order, saga and pending outbox events commit together.
+- Added private customer and guest history, status and cancellation. Unpaid orders expire after a configurable 15-minute default. The customer app provides checkout and order tracking, with guest access retained in tab session storage.
+- Passed the Ordering unit and SQL integration tests for concurrent checkout, retries during an upstream outage, snapshot persistence, cross-account privacy, outbox counts, cancellation and expiry. Re-ran Cart tests after sharing the customer request guard. All three Angular apps built and 12 frontend tests passed.
+- Passed the expanded Edge browser flow through SQL Server and YARP, including customer checkout/history/cancellation and guest checkout, refresh access and cancellation. Reviewed the mobile order screenshot and confirmed no horizontal overflow.
+- Payment, delivery and broker-driven status transitions are the next integrations.

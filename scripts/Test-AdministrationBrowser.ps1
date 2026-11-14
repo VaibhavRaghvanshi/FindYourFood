@@ -8,7 +8,7 @@ if ($Experience -and $Provider) { throw 'Select one browser profile.' }
 $processNames = @('identity', 'gateway', 'organization', 'admin-frontend')
 if ($Experience) { $processNames += @('experience', 'frontend') }
 if ($Provider) { $processNames += @('provider', 'provider-frontend') }
-if ($Marketplace) { $processNames += @('catalog', 'customer', 'location', 'discovery', 'cart', 'frontend') }
+if ($Marketplace) { $processNames += @('catalog', 'customer', 'location', 'discovery', 'cart', 'ordering', 'frontend') }
 foreach ($name in $processNames) {
   if (Get-DevelopmentProcess $name) { throw "$name is already running. Stop the current profile first." }
 }
@@ -32,7 +32,7 @@ $readyToClean = $false
 $profileStarted = $false
 $seedOptions = @()
 $marketplaceOriginal = @{}
-foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery', 'Cart')) {
+foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery', 'Cart', 'Ordering')) {
   $key = "ConnectionStrings__$service"
   $marketplaceOriginal[$key] = [Environment]::GetEnvironmentVariable($key)
 }
@@ -59,7 +59,7 @@ try {
   }
   $env:FINDYOURFOOD_E2E_MARKETPLACE = if ($Marketplace) { 'true' } else { $null }
   if ($Marketplace) {
-    foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery', 'Cart')) {
+    foreach ($service in @('Catalog', 'Customer', 'Location', 'Discovery', 'Cart', 'Ordering')) {
       $identity['Initial Catalog'] = "FindYourFood_${service}Test_$run"
       [Environment]::SetEnvironmentVariable("ConnectionStrings__$service", $identity.get_ConnectionString())
     }
@@ -72,7 +72,7 @@ try {
   if ($Experience) {
     & "$PSScriptRoot/Start-ExperienceEnvironment.ps1"
   } elseif ($Marketplace) {
-    & "$PSScriptRoot/Start-MarketplaceEnvironment.ps1" -Services Discovery,Customer,Cart
+    & "$PSScriptRoot/Start-MarketplaceEnvironment.ps1" -Services Discovery,Customer,Ordering
   } elseif ($Provider) {
     & "$PSScriptRoot/Start-ProviderEnvironment.ps1"
   } else {

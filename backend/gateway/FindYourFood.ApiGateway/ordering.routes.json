@@ -1,0 +1,75 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "ordering-create": {
+        "ClusterId": "ordering",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 8192,
+        "Match": {
+          "Path": "/api/v1/orders",
+          "Methods": [
+            "GET",
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "ordering-read": {
+        "ClusterId": "ordering",
+        "AuthorizationPolicy": "Anonymous",
+        "Match": {
+          "Path": "/api/v1/orders/{id:guid}",
+          "Methods": [
+            "GET"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      },
+      "ordering-cancel": {
+        "ClusterId": "ordering",
+        "AuthorizationPolicy": "Anonymous",
+        "MaxRequestBodySize": 1024,
+        "Match": {
+          "Path": "/api/v1/orders/{id:guid}/cancel",
+          "Methods": [
+            "POST"
+          ]
+        },
+        "Transforms": [
+          {
+            "X-Forwarded": "Set"
+          }
+        ]
+      }
+    },
+    "Clusters": {
+      "ordering": {
+        "HttpRequest": {
+          "ActivityTimeout": "00:00:15"
+        },
+        "HealthCheck": {
+          "Active": {
+            "Enabled": true,
+            "Interval": "00:00:10",
+            "Timeout": "00:00:03",
+            "Policy": "ConsecutiveFailures",
+            "Path": "/health/ready"
+          }
+        },
+        "Destinations": {
+          "local": {
+            "Address": "http://localhost:5110/"
+          }
+        }
+      }
+    }
+  }
+}

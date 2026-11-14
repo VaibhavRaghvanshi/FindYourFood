@@ -96,7 +96,7 @@ public sealed class ShoppingCarts(ICartRepository carts, ICommerceSource commerc
     private static CartView View(ShoppingCart cart, BranchCatalog source)
     {
         var selections = JsonSerializer.Deserialize<CartSelection[]>(cart.SelectionsJson)!;
-        return new(cart.Id, cart.BranchId, cart.Revision, cart.ExpiresAt, source.Menu.Currency, source.Menu.Version,
+        return new(cart.Id, cart.BranchId, source.Menu.Menu.Name, cart.Revision, cart.ExpiresAt, source.Menu.Currency, source.Menu.Version,
             source.OpenNow, selections, CartPricing.Calculate(source.Menu, selections));
     }
 

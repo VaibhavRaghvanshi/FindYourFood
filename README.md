@@ -122,4 +122,8 @@ Apply the latest Provider migration with `./scripts/Initialize-ProviderDatabase.
 
 Initialize Cart with `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Cart` and run `./scripts/Start-MarketplaceEnvironment.ps1 -Services Discovery,Customer,Cart` after initializing those services. Add menu items with their variants and add-ons, then open `/cart` to edit quantities and get a delivery quote. Guest carts work without registration. See the [Cart API contract](docs/api-contracts/CART.md).
 
+## Create an order
+
+Initialize Ordering with `./scripts/Initialize-MarketplaceDatabase.ps1 -Service Ordering` and start `./scripts/Start-MarketplaceEnvironment.ps1 -Services Discovery,Customer,Ordering`. After reviewing a cart's delivery quote, continue to checkout, enter delivery details and place the order. Open **Your orders** to view history and status. The initial stage is **Awaiting payment**, with cancellation available before restaurant acceptance. See the [Ordering API contract](docs/api-contracts/ORDERING.md).
+
 [Product requirements](docs/requirements/PRODUCT_REQUIREMENTS.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Progress](docs/PROGRESS.md) · [Blockers](docs/BLOCKERS.md)

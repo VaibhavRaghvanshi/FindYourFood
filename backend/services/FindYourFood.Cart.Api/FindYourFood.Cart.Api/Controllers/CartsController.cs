@@ -3,13 +3,13 @@ using FindYourFood.Cart.Application.DTOs;
 using FindYourFood.Cart.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using FindYourFood.Hosting;
 
 namespace FindYourFood.Cart.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/carts")]
-[ServiceFilter(typeof(CartCustomerFilter))]
+[ServiceFilter(typeof(CustomerRequestFilter))]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class CartsController(ShoppingCarts carts) : ControllerBase
 {
@@ -69,21 +69,5 @@ public sealed class CartsController(ShoppingCarts carts) : ControllerBase
         {
             return Problem(statusCode: 503, title: "Cart pricing is temporarily unavailable. Try again.");
         }
-    }
-}
-
-public sealed class CartCustomerFilter : IAsyncActionFilter
-{
-    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-    {
-        var user = context.HttpContext.User;
-        if (user.HasClaim(claim => claim.Type == "account_type") ||
-            (user.Identity?.IsAuthenticated == true &&
-                (!Guid.TryParse(user.FindFirst("sub")?.Value, out var id) || id == Guid.Empty)))
-        {
-            context.Result = new ForbidResult();
-            return;
-        }
-        await next();
     }
 }

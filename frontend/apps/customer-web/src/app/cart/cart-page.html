@@ -8,6 +8,7 @@
   @if (cart.busy()) { <p role="status">Updating your cart…</p> }
   @if (cart.message()) { <p role="status">{{ cart.message() }}</p> }
   @if (cart.view(); as current) {
+    <p>{{ current.menuName }}</p>
     <a [routerLink]="['/menu', current.branchId]">Back to this menu</a>
     @if (!current.branchOpen) { <p>This restaurant is currently closed.</p> }
     <div class="lines">
@@ -49,6 +50,7 @@
         <p>Items {{ (quote.cart.prices.subtotalMinor ?? 0) / 100 | currency:current.currency }}</p>
         <p>Delivery {{ quote.deliveryFeeMinor / 100 | currency:current.currency }}</p>
         <strong>Total {{ quote.totalMinor / 100 | currency:current.currency }}</strong>
+        <p><a routerLink="/checkout">Continue to checkout</a></p>
       </section>
     }
   } @else if (!cart.busy()) {

@@ -1,0 +1,28 @@
+<main>
+  <header><a routerLink="/home"><img src="/brand/findyourfood-logo.png" width="68" height="68" alt="FindYourFood home"></a><a routerLink="/restaurants">Find food</a></header>
+  <h1>Your orders</h1>
+  @if (message()) { <p role="status">{{ message() }}</p> }
+  @if (!customer.profile()) { <p><a routerLink="/">Sign in</a> to see your account's order history.</p> }
+  @for (order of items(); track order.id) {
+    <article>
+      <h2><a [routerLink]="['/orders', order.id]">{{ order.menuName }}</a></h2>
+      <p>{{ labels[order.status] ?? order.status }} · {{ order.createdAt | date:'medium' }}</p>
+      <strong>{{ order.totalMinor / 100 | currency:order.currency }}</strong>
+    </article>
+  } @empty { @if (customer.profile() && !busy()) { <p>No orders on this page yet.</p> } }
+  @if (customer.profile()) {
+    <nav class="actions" aria-label="Order history pages">
+      <button type="button" [disabled]="busy() || page() === 1" (click)="load(page() - 1)">Previous</button>
+      <span>Page {{ page() }}</span>
+      <button type="button" [disabled]="busy() || items().length < 20" (click)="load(page() + 1)">Next</button>
+    </nav>
+  }
+  @if (guestOrders.length) {
+    <section>
+      <h2>Guest orders in this tab</h2>
+      @for (id of guestOrders; track id; let index = $index) {
+        <p><a [routerLink]="['/orders', id]">View guest order {{ index + 1 }}</a></p>
+      }
+    </section>
+  }
+</main>

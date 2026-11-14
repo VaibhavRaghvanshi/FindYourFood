@@ -43,6 +43,8 @@ public abstract class SqlServiceFixture<THost, TDatabase>(string service, Func<D
 
     protected virtual void Configure(IServiceCollection services) { }
 
+    public IServiceScope CreateScope() => _factory!.Services.CreateScope();
+
     public HttpClient Client(Guid? subject = null, params Claim[] additionalClaims)
     {
         var client = _factory!.CreateClient();
